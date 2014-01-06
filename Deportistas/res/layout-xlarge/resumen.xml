@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    
+    android:orientation="vertical" >
+
+      <!-- Heather aligned to bottom -->    
+<include layout="@layout/header" />
+    
+    
+ 
+    
+    <TextView
+        android:id="@+id/txtresumennobre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Aciertos por tema"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtresumengeneral"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/txtresumengeo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"/>
+
+    <TextView
+        android:id="@+id/txtresumenfutbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txtresumendeportes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        />
+
+    <TextView
+        android:id="@+id/txtresumenlunfardo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txtresumenliteratura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+       />
+
+    <TextView
+        android:id="@+id/txtseparadorresumenerrores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Errores por tema"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txterroresgeneral"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txterroresgeo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txterroresfutbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txterroresdeportes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/txterroreslunfardo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        />
+
+    <TextView
+        android:id="@+id/txterroresliteratura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+         />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="La dificultad fue la siguiente"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtdificil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Difíciles"
+         />
+
+    <TextView
+        android:id="@+id/txtmedias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Media"
+         />
+
+    <TextView
+        android:id="@+id/txtbasicas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Básicas"
+         />
+
+    <TextView
+        android:id="@+id/txtotros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Otros datos"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txttiempopromedio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tiempo promedio de respuesta"
+         />
+<!-- Footer aligned to bottom --> 
+
+<include layout="@layout/footer" />
+</LinearLayout>

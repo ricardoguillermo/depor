@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal" >
+
+    <!-- Heather aligned to bottom -->
+
+   <!--  <include
+ 
+        layout="@layout/header" /> -->
+
+    <!-- Footer aligned to bottom -->
+
+    <include layout="@layout/footer" />
+
+    <!-- Botones stars -->
+
+    <RelativeLayout
+        android:id="@+id/menu_botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:gravity="right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/txtPlacard"
+            android:background="@drawable/home_button_black"
+            
+             />
+
+        <TextView
+            android:id="@+id/txtPlacard"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_toLeftOf="@+id/txtTiempo"
+            android:background="@drawable/home_icon_empty"
+            android:padding="18dp"
+            android:text="00"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/txtTiempo"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/home_icon_empty"
+            android:padding="18dp"
+            android:text="30"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+    <!-- Conteiner Principal -->
+
+    <LinearLayout
+        android:id="@+id/content1"
+       android:layout_centerHorizontal="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/menu_botones"
+        android:layout_margin="30dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/panel"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txtPregunta"
+            style="@style/pregunta"
+            android:layout_marginBottom="20dp"
+            />
+
+        <TextView
+            android:id="@+id/txtsector4"
+            style="@style/respuestas"
+            android:layout_below="@+id/txtsector3"
+             />
+
+        <TextView
+            android:id="@+id/txtsector3"
+            style="@style/respuestas"
+            android:layout_below="@+id/txtsector2"
+            />
+
+        <TextView
+            android:id="@+id/txtsector2"
+            style="@style/respuestas"
+            android:layout_below="@+id/txtsector1"
+             />
+
+        <TextView
+            android:id="@+id/txtsector1"
+            style="@style/respuestas"
+             />
+
+       
+        
+        <!--
+            <Button
+            android:id="@+id/btnaPuntaje"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            android:layout_alignBottom="@+id/txtsector4"
+            android:text="@string/salir" 
+            />
+        -->
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageRespuesta"
+        android:src="@drawable/wrong"
+        android:alpha="0.7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_centerVertical="true"
+        android:visibility="invisible" />
+
+   
+
+</RelativeLayout>

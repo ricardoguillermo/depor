@@ -1,0 +1,2669 @@
+package com.example.mundiales;
+
+
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements OnClickListener{
+	// variables de objetos graficos son los botones y titulo
+	Button boton1;
+	Button boton2;
+	Button boton3;
+	Button boton4;
+	Button boton5;
+	TextView texto;
+	
+	// variable del puntaje
+	static AlmacenPuntuaciones almacen;
+	
+	
+	// variables tipo String entero y booleano
+	boolean preferenciasGuardadas;
+	int velocidad,puntaje;
+	int cantidaderrores;
+	String musica;
+	
+	// variable para la música
+	public MediaPlayer mp;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		// se inicializan los botones definidos en la primera parte
+		boton1 = (Button) findViewById(R.id.Button01);
+		boton2 = (Button) findViewById(R.id.Button02);
+		boton3 = (Button) findViewById(R.id.Button03);
+		boton4 = (Button) findViewById(R.id.Button04);
+		boton5 = (Button) findViewById(R.id.Button05);
+		texto = (TextView) findViewById(R.id.tituloinicial);
+		
+		// coloca los escuchas
+		boton1.setOnClickListener(this);
+		boton2.setOnClickListener(this);
+		boton3.setOnClickListener(this);
+		boton4.setOnClickListener(this);
+		boton5.setOnClickListener(this);
+
+		// inicializa objeto para los puntos
+		almacen = new AlmacenPuntuacionesSQLite(this);
+		
+		// carga las preferencias (velocidad y musica)
+		cargarPreferencias(); 
+		
+		// animacion del cartel de entrada		
+		Animation animacion = AnimationUtils.loadAnimation(this,
+					R.anim.animacion);
+		texto.startAnimation(animacion);// agrega animacion al texto
+		
+		mp= MediaPlayer.create(this, R.raw.musica); // agrega musica al mp
+		
+		//sonido si en un inicio
+		if (musica.equals("si"))
+			play_mp();	
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.Button01:// lanza el juego
+			lanzarJuego();
+			break;
+		case R.id.Button02:// ajustes nuvel del juego sonido etc
+			if (mp.isPlaying()){// si esta funcionando lo apaga
+				stop_mp();
+			}
+			lanzarAjustes();
+			break;
+		case R.id.Button03:// 
+			lanzarAcercade();
+			break;
+		case R.id.Button04:// lanzar las puntuaciones
+			lanzarPuntuaciones();
+			break;
+		case R.id.Button05:// sale de la aplicacion o de la activity ojo 
+			lanzarHistorias();
+			if (mp.isPlaying()){// si esta funcionando lo apaga
+				stop_mp();
+			}
+			
+			finish();
+			break;
+		}
+	}
+	
+	public void lanzarHistorias(){
+		Intent i = new Intent(this,Historias.class);
+		startActivity(i);
+		
+	}
+	public void lanzarJuego() {
+		Intent i = new Intent(this, CanchaMundiales.class);
+		startActivity(i);
+	}
+	
+	// carga las preferencias de velocidad y música
+		public void cargarPreferencias() {
+
+			SharedPreferences prefs = getSharedPreferences("preferenciasMiApp",
+					Context.MODE_PRIVATE);
+
+			// por si no hay coloca vel y musica no
+			this.velocidad = prefs.getInt("velocidad", 50);
+			this.musica=prefs.getString("musica","si" );
+			this.cantidaderrores=prefs.getInt("cantidaderrores", 5);
+			
+		}
+		
+		protected void onPause() {
+			// TODO Auto-generated method stub
+			super.onPause();
+		}
+		
+		
+		
+		// lanzar ajustes 
+		public void lanzarAjustes() {
+			Intent i = new Intent(this, Ajustes.class);
+			startActivity(i);
+		}
+
+		// prende musica
+		private void play_mp() {
+			mp.start();
+			}
+
+		// apaga musica	
+		private void stop_mp() {
+			mp.stop();
+			}
+		
+		public void lanzarAcercade() {
+			
+			// sera la ayuda pero espero a terminar//Intent i = new Intent(this, AcercaDe.class);
+			Intent i = new Intent(this, Parapruebas.class);
+			startActivity(i);
+		}
+		
+		public void lanzarPuntuaciones() {
+			Intent i = new Intent(this, Puntuaciones.class);
+			startActivity(i);
+		}
+		
+		
+				
+	
+		protected void onResume() {
+			// TODO Auto-generated method stub
+			super.onResume();
+			
+			cargarPreferencias();
+			
+			if (musica.equals("si"))
+				play_mp();	
+		}
+}
+
+***************************************************************
+
+
+package com.example.urutrivia;
+
+import java.util.Vector;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class AlmacenPuntuacionesSQLite extends SQLiteOpenHelper implements AlmacenPuntuaciones {
+
+	
+	boolean estoy;
+	//Métodos de SQLiteOpenHelper
+
+    public AlmacenPuntuacionesSQLite(Context context) {
+
+          super(context, "puntuaciones", null, 1);
+          //estoy=estoyTop(5, 100);
+
+    }
+
+
+
+    @Override public void onCreate(SQLiteDatabase db) {
+
+          db.execSQL("CREATE TABLE puntuaciones ("+
+
+                        "_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+
+                        "puntos INTEGER, nombre TEXT, fecha TEXT, catego TEXT)");
+
+    }
+
+
+
+    @Override    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    // En caso de una nueva versión habría que actualizar las tablas
+
+    }
+
+
+
+    //Métodos de AlmacenPuntuaciones
+
+    public void guardarPuntuacion(int puntos, String nombre,String fecha,String categoria) {
+
+          SQLiteDatabase db = getWritableDatabase();
+
+          db.execSQL("INSERT INTO puntuaciones VALUES ( null, "+
+
+                        puntos+", '" + nombre + "', '" + fecha + "', '" + categoria +"')");
+
+    }
+    
+    
+
+    public Vector<String> listaPuntuaciones(int cantidad, String categoria) {
+
+          Vector<String> result = new Vector<String>();
+
+          SQLiteDatabase db = getReadableDatabase();
+
+          Cursor cursor = db.rawQuery("SELECT puntos, nombre, fecha FROM " +
+           "puntuaciones  ORDER BY puntos DESC LIMIT " +cantidad, null);
+
+          while (cursor.moveToNext()){
+
+                        result.add(cursor.getInt(0)+" " +cursor.getString(1)+"  "+cursor.getString(2));
+
+           }
+
+          cursor.close();
+
+          return result;
+
+    }     
+    
+    public Vector<String> estadistica(int cantidad){
+    	
+    	Vector<String> resultado = new Vector<String>();
+    	
+    	SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT puntos, nombre, catego FROM " +
+         "puntuaciones  ORDER BY puntos DESC LIMIT " +cantidad, null);
+
+        while (cursor.moveToNext()){
+
+                      resultado.add(cursor.getInt(0)+" " +cursor.getString(1)+"  "+cursor.getString(2));
+
+         }
+
+        cursor.close();
+
+        return resultado;
+    }
+    
+    
+    public boolean estoyTop(int min,int puntos){
+    	SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT puntos, nombre FROM " +
+         "puntuaciones  ORDER BY puntos DESC LIMIT " +min, null);
+        
+        // preguntar si es distinto de vacio o del valor a estimar
+        if (cursor.getCount()<min){
+        	return true;
+        }
+        while (cursor.moveToNext()){
+
+            if(cursor.getInt(0)<puntos){
+            	cursor.close();
+            	return true;
+            }
+
+        }
+
+        cursor.close();
+   	
+		return false;
+    	
+    }
+    
+    
+    public void borrarregistros(){
+    	SQLiteDatabase db = getReadableDatabase();
+    	        
+    	db.execSQL("DELETE FROM puntuaciones");
+ 
+        
+    }
+    
+}
+
+
+*****************************************************************
+
+package com.example.urutrivia;
+
+import java.util.Vector;
+
+public interface AlmacenPuntuaciones {
+	public void guardarPuntuacion(int puntos,String nombre,String fecha,String categoria);
+
+    public Vector<String> listaPuntuaciones(int cantidad, String categoria);
+    
+    public boolean estoyTop(int min,int puntos);
+    public void borrarregistros();
+    public Vector<String> estadistica(int cantidad);
+}
+
+
+
+
+*******************************************************************
+
+
+
+package com.example.mundiales;
+
+
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class CanchaMundiales extends Activity implements OnClickListener{
+
+	TextView secpregunta,sector1,sector2,sector3,sector4;
+	TextView tiempo, placard;
+	ImageView iconoerror1,iconoerror2,iconoerror3,iconoerror4,iconoerror5,iconosuperior;
+	ImageView menuinicial;
+	//Button btnEmpezar;
+	TextView paraBetty;
+	Button flecha;
+	TextView tema;// para el letrito del tema
+	LinearLayout linearLayout;
+	
+	Utiles calculos;// sortea el orden de los aciertos, etc
+	
+	// variables de aciertos
+	String cierto = "";
+	String error1 = "";
+	String error2 = "";
+	String error3 = "";
+	String pregunta = "";
+	String acierto = "";
+	String temasortedo;
+	String nivel;
+	
+	HashMap<String,Integer> listaProductos = new HashMap<String,Integer>();
+	
+	
+	int puntaje = 0; // puntaje inicial
+	int errores = 0;// cantidad de errores a
+	int cantidaderrores;// previstos en configuración
+	int lecturapondrada;
+	
+	String misdatos="";// junta los aciertos y errores etc
+	String orden;// almacena el orden de colocar los aciertos	
+	String linea = null;
+	
+	// sonidos cortos
+	SoundPool soundPool;
+	int bien, mal,pito;
+		
+	//Variables de tiempo y preferencias
+	int time_elegido;// ojo aqui podria venir el tiempo leido
+	Timer timer;
+	Handler handler=new Handler();
+	int rate = 1000; //repite cada segundo
+	int time=0; // contador de tiemp
+	
+	int cantidaddepreguntas;
+	
+	int estado;// para ver si arreglo un bug	
+	
+protected void onCreate(Bundle savedInstanceState) {
+	// TODO Auto-generated method stub
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.cancha);
+	
+	// instancia las variables con los recursos
+		secpregunta = (TextView) findViewById(R.id.pregunta);// pregunta
+		sector1 = (TextView) findViewById(R.id.txtresumengeneral);// errores
+		sector2 = (TextView) findViewById(R.id.txtdificil);
+		sector3 = (TextView) findViewById(R.id.txttercero);
+		sector4 = (TextView) findViewById(R.id.provisorio);
+		tiempo = (TextView) findViewById(R.id.tiempo);// ojo es el tiempo
+		//btnEmpezar = (Button) findViewById(R.id.btnEmpezar);
+		placard = (TextView) findViewById(R.id.puntos);
+		tema = (TextView) findViewById(R.id.temacancha);
+		linearLayout = (LinearLayout) findViewById(R.id.cero);
+		iconoerror1=(ImageView) findViewById(R.id.iconoimagen1);//  ic errores
+		iconoerror2=(ImageView) findViewById(R.id.imageViewdos);
+		iconoerror3=(ImageView) findViewById(R.id.iconoimagen3);
+		iconoerror4=(ImageView) findViewById(R.id.iconoimagen4);
+		iconoerror5=(ImageView) findViewById(R.id.iconoimagen5);
+			
+		iconosuperior=(ImageView) findViewById(R.id.iconoimagensuperior);
+		paraBetty=(TextView) findViewById(R.id.txtparabetty);// num provisorio
+		menuinicial=(ImageView) findViewById(R.id.imgmenupuntuaciones);// vuelta al inicio
+		flecha=(Button) findViewById(R.id.flecha);// pasa a puntuaciones
+		
+			// coloca los escucha (listener)
+		sector1.setOnClickListener(this);
+		sector2.setOnClickListener(this);
+		sector3.setOnClickListener(this);
+		sector4.setOnClickListener(this);
+		//btnEmpezar.setOnClickListener(this);
+		menuinicial.setOnClickListener(this);
+		flecha.setOnClickListener(this);
+		
+		// instancia auxiliar para calculos
+			calculos=new Utiles();
+
+			// leer tiempo_elegido y nivel ...
+			cargarPreferencias();
+			replantearerrores();
+			
+	// tiempo
+		timer= new Timer("Temporizador");
+		Tarea tarea=new Tarea();
+		timer.scheduleAtFixedRate(tarea,0,rate);
+					
+	// sonido
+		soundPool = new SoundPool( 5, AudioManager.STREAM_MUSIC , 0);
+		bien = soundPool.load(this, R.raw.bien, 0);
+		mal = soundPool.load(this, R.raw.error, 0);
+		pito=soundPool.load(this, R.raw.pito, 0);
+	
+	// inicia con un pito
+		//soundPool.play(pito, 1, 1, 1, 0, 1);
+		
+	// calcula la cantidad de líneas
+		cantidaddepreguntas=totaldepreguntas();
+		//String.valueOf(cantidaddepreguntas);
+		paraBetty.setText(String.valueOf(cantidaddepreguntas));
+		
+	// la primera vez
+		nueva_jugada();
+		
+		estado=1;		
+}
+
+class Tarea extends TimerTask{
+	@Override
+	public void run() {
+		Runnable cambiaTexto=new Cambia();
+		handler.post(cambiaTexto);
+	}	
+}
+
+class Cambia implements Runnable {
+	public void run() {
+		//solo empieza a procesar si time es mayor que cero
+		
+			if (estado == 0){
+				return;
+			}
+				
+			
+			time=time+1;
+			
+			if (time==1) {
+				sector1.setBackgroundColor(Color.TRANSPARENT);// deja transparente
+				sector2.setBackgroundColor(Color.TRANSPARENT);
+				sector3.setBackgroundColor(Color.TRANSPARENT);
+				sector4.setBackgroundColor(Color.TRANSPARENT);
+				soundPool.play(pito, 1, 1, 1, 0, 1);
+				orden = calculos.sortearPosibilidad();// sortea el orden
+				colocar(orden);// coloca en funcion del orden 
+				colocarBanderas();
+				return;
+			}
+		
+			if (time>1){
+				//time=time+1;// coloca el reloj	
+				int m= (time_elegido-time);
+				String cadena= Integer.toString(m);
+				tiempo.setText(cadena);
+			
+				if (time==time_elegido){
+					// Se acabo el tiempo sin contestar
+					errores +=1;// si ya hay 3 errores
+					estado=0;
+					puntaje(-10);// metodo sobreescrito
+				}
+			}
+		}
+	}
+
+
+@Override
+public void onClick(View v) {
+	
+	switch (v.getId()) {
+	// en los sectores compara variables string, manda a puntaje y suena
+	//Dianita hay nombres de recursos que cambiaría por algo mas apropiado sorry
+	case R.id.txtresumengeneral:// clik en el sector 1 ojo el nobre del ID
+		if (acierto.equals("sector1")) {
+			puntaje(10, sector1);
+			 soundPool.play(bien, 1, 1, 1, 0, 1);
+		} else {
+			errores += 1;
+			soundPool.play(mal, 1, 1, 1, 0, 1);
+			puntaje(-10, sector1);
+		}
+		nueva_jugada();
+		break;
+	case R.id.txtdificil:// clik en sector 2, ojo nombre del ID
+		if (acierto.equals("sector2")) {
+			puntaje(10, sector2);
+			soundPool.play(bien, 1, 1, 1, 0, 1);
+		} else {
+			errores += 1;
+			soundPool.play(mal, 1, 1, 1, 0, 1);
+			puntaje(-10, sector2);
+		}
+		nueva_jugada();
+		break;
+	case R.id.txttercero:// clik en sector 3
+		if (acierto.equals("sector3")) {
+			puntaje(10, sector3);
+			soundPool.play(bien, 1, 1, 1, 0, 1);
+		} else {
+			errores += 1;
+			soundPool.play(mal, 1, 1, 1, 0, 1);
+			puntaje(-10, sector3);
+		}
+		nueva_jugada();
+		break;
+	case R.id.provisorio:// corresponde al 4 sector luego cambiar nombre
+		if (acierto.equals("sector4")) {
+			puntaje(10, sector4);
+			soundPool.play(bien, 1, 1, 1, 0, 1);
+		} else {
+			errores += 1;
+			soundPool.play(mal, 1, 1, 1, 0, 1);
+			puntaje(-10, sector4);
+		}
+		nueva_jugada();
+		break;
+	case R.id.imgmenupuntuaciones:// vulve a el menu inicio, nombre poco acertado del id
+		Context context = getApplicationContext();
+		Intent i = new Intent(context, MainActivity.class);
+		startActivity(i);
+		break;
+	case R.id.flecha:// se transformó en un botón y pasa al top
+		Intent ir = new Intent(this, Entrada.class);
+		ir.putExtra("puntos", puntaje);
+		startActivity(ir);
+		break;
+	}
+	
+}
+
+private void puntaje(int valor, TextView sector) {
+	puntaje += valor;// suma el valor recibido
+	time=0;// para la cuenta
+	
+	estado=0;
+	dibujarerrores(errores);// revisa si hay que poner iconos
+				
+	String str = Integer.toString(puntaje);// placard
+	placard.setText(str);
+				
+	// si es acierto o no 
+	if(valor>0){
+		sector.setBackgroundColor(Color.GREEN);
+		estado=1;		
+	}else{
+		sector.setBackgroundColor(Color.RED);
+		revisarelcorrecto();// pinta el correcto
+		if (errores>cantidaderrores){
+			estado=0;
+			pasar_final();
+			return;
+		}
+	}
+}
+
+// esta sobreescrita por si no hay click y si demora
+private void puntaje(int valor) {
+	puntaje += valor;// suma el valor
+	
+	time=0;// para la cuenta
+	estado=0;
+	
+	dibujarerrores(errores);
+				
+	String str = Integer.toString(puntaje);// placard
+	placard.setText(str);
+				
+	revisarelcorrecto();// pinta el correcto
+	
+	if (errores>cantidaderrores){
+		estado=0;
+		pasar_final();
+		
+		return;
+	}else{
+		estado=1;
+		nueva_jugada();
+	}
+	}
+
+private void dibujarerrores(int err){
+	switch (err) {
+	case 1:
+		iconoerror1.setImageResource(R.drawable.f1tachada);
+		break;
+	case 2:
+		iconoerror1.setImageResource(R.drawable.f1tachada);
+		iconoerror2.setImageResource(R.drawable.f1tachada);
+		break;
+	case 3:
+		iconoerror1.setImageResource(R.drawable.f1tachada);
+		iconoerror2.setImageResource(R.drawable.f1tachada);
+		iconoerror3.setImageResource(R.drawable.f1tachada);
+		break;
+	case 4:
+		iconoerror1.setImageResource(R.drawable.f1tachada);
+		iconoerror2.setImageResource(R.drawable.f1tachada);
+		iconoerror3.setImageResource(R.drawable.f1tachada);
+		iconoerror4.setImageResource(R.drawable.f1tachada);
+		break;
+	case 5:
+		iconoerror1.setImageResource(R.drawable.f1tachada);
+		iconoerror2.setImageResource(R.drawable.f1tachada);
+		iconoerror3.setImageResource(R.drawable.f1tachada);
+		iconoerror4.setImageResource(R.drawable.f1tachada);
+		iconoerror5.setImageResource(R.drawable.f1tachada);
+		break;	
+	default:
+		break;
+	}
+}
+
+private void revisarelcorrecto(){
+	
+	if (sector1.getText().equals(cierto)){
+		sector1.setBackgroundColor(Color.GREEN);
+		return;
+	}
+	if (sector2.getText().equals(cierto)){
+		sector2.setBackgroundColor(Color.GREEN);
+		return;
+	}
+	if (sector3.getText().equals(cierto)){
+		sector3.setBackgroundColor(Color.GREEN);
+		return;
+	}
+	if (sector4.getText().equals(cierto)){
+		sector4.setBackgroundColor(Color.GREEN);
+		return;
+	}
+}
+
+public void pasar_final(){
+	// me avisa de los errores y pasa a entrada de nombre		
+	errores=0;
+	/*Context context = getApplicationContext();
+	CharSequence text = "Lo siento son mas de "+ cantidaderrores +" errores!";
+	int duration = Toast.LENGTH_LONG;
+	Toast toast = Toast.makeText(context, text, duration);
+	toast.show();*/
+	
+	// pasa y envia el dato
+	Intent te = new Intent( this, Entrada.class);
+	te.putExtra("puntos", puntaje);
+	te.putExtra("misdatos", misdatos);
+	startActivity(te);
+}
+
+
+//preferencias 
+	public void cargarPreferencias() {
+			// por ahora solo cargamos el tiempo_elegido
+			SharedPreferences prefs = getSharedPreferences("preferenciasMiApp",
+					Context.MODE_PRIVATE);
+			// por si no hay coloca vel ponemos 50
+			this.time_elegido = prefs.getInt("velocidad", 50);
+			this.cantidaderrores=prefs.getInt("cantidaderrores", 3);
+		}
+
+		// cerrar la activity
+	protected void onPause() {
+			super.onPause();
+			estado=0;
+			finish();
+		}
+
+	// se dispara al apretar boton
+	public void nueva_jugada(){
+		
+		/*String mensaje = "Cant Errores = "+ cantidaderrores + " T max = " + time_elegido + "error actual = "+errores;
+		ponermensaje(mensaje);
+*/		estado=1;
+		desarmar(leerlinea());
+		time=-4;// permite empezar a contar -4 porque da unos segundos para ver lo anterior
+		
+	}
+	
+	
+	// método para colocar los strings en las ventanas
+		public void colocar(String orden) {
+				// coloca la pregunta leida			
+				secpregunta.setText(pregunta);// coloca la pregunta
+				
+				// en funcion de la ubicación de la letra "c" y ..
+				// analizamos cada ubicacion de los digitos
+				//colocamos las string en los text y si corresponde el acierto
+				String primeraletra = orden.substring(0, 1);
+				if (primeraletra.equals("c")) {
+					sector1.setText(cierto);
+					acierto = "sector1";
+				}
+				if (primeraletra.equals("1"))
+					sector1.setText(error1);
+				if (primeraletra.equals("2"))
+					sector1.setText(error2);
+				if (primeraletra.equals("3"))
+					sector1.setText(error3);//
+				// segunda letra
+				String segundaletra = orden.substring(1, 2);
+				if (segundaletra.equals("c")) {
+					sector2.setText(cierto);
+					acierto = "sector2";
+				}
+				if (segundaletra.equals("1"))
+					sector2.setText(error1);
+				if (segundaletra.equals("2"))
+					sector2.setText(error2);
+				if (segundaletra.equals("3"))
+					sector2.setText(error3);
+				// tercera letra
+				String terceraletra = orden.substring(2, 3);
+				if (terceraletra.equals("c")) {
+					sector3.setText(cierto);
+					acierto = "sector3";
+				}
+				if (terceraletra.equals("1"))
+					sector3.setText(error1);
+				if (terceraletra.equals("2"))
+					sector3.setText(error2);
+				if (terceraletra.equals("3"))
+					sector3.setText(error3);
+				// cuarta letra
+				String cuartaletra = orden.substring(3, 4);
+				if (cuartaletra.equals("c")) {
+					sector4.setText(cierto);
+					acierto = "sector4";
+				}
+				if (cuartaletra.equals("1"))
+					sector4.setText(error1);
+				if (cuartaletra.equals("2"))
+					sector4.setText(error2);
+				if (cuartaletra.equals("3"))
+					sector4.setText(error3);
+			}
+		
+		private String leerlinea(){
+			// una linea del archivo al azar ojo numlineas
+			int lineaelegida=0;
+			int numlineas =0;
+			lecturapondrada+=1;
+			
+			if (lecturapondrada >3){
+			lecturapondrada=1;}
+			
+			switch (lecturapondrada) {
+			case 1:
+				numlineas = 2607;//4800
+				lineaelegida=(int) (Math.random() * numlineas + 1);
+				break;
+			case 2:
+				numlineas = 4504- 2607;//4800
+				lineaelegida=(int) (Math.random() * numlineas + 1);
+				lineaelegida=lineaelegida+3053;
+				break;
+			case 3:
+				numlineas = cantidaddepreguntas-4504;//4800 revisar y colocar un tope movil par apoder seguir poniendo preguntas
+				lineaelegida=(int) (Math.random() * numlineas + 1);
+				lineaelegida=lineaelegida+4504;
+				break;
+			default:
+				break;
+			
+				
+			}
+			
+			
+		// lee un archivo de nombre cuatrorespuestas previamente colocado
+		try
+		{
+		    InputStream fraw = getResources().openRawResource(R.raw.mundiales);
+		    int a =0;
+		    BufferedReader brin =  new BufferedReader(new InputStreamReader(fraw));
+		    while ((linea = brin.readLine()) != null)   {
+	            a+=1;
+	            if (a==lineaelegida){
+	            	fraw.close();
+	            	return linea;
+	            }
+	        }
+	        fraw.close();
+		}
+		catch (Exception ex)
+		{
+		    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+		}
+		return linea;
+		}
+		
+		// transforma la linea en una matriz
+		private void desarmar(String datoleido){
+			String[] parts = datoleido.split(";");
+			//0 es numero de pregunta 1 la pregunta ...
+			cierto=parts[2]; 
+			error1=parts[3];//cierto
+			error2=parts[4];// error1
+			error3=parts[5];// error2
+			nivel=parts[6];
+			pregunta=parts[1];
+			paraBetty.setText(parts[0]);//coloca el numero para testear
+		}
+		
+		
+		private void replantearerrores(){
+			switch (cantidaderrores) {
+			case 1:
+				// dejar visible solo 1 iconos
+				iconoerror1.setVisibility(View.VISIBLE);
+				break;
+			case 3:
+				// dejar visible solo 3 iconos
+				iconoerror1.setVisibility(View.VISIBLE);
+				iconoerror2.setVisibility(View.VISIBLE);
+				iconoerror3.setVisibility(View.VISIBLE);
+				break;
+			case 5:
+				// dejar visible solo 5 iconos
+				iconoerror1.setVisibility(View.VISIBLE);
+				iconoerror2.setVisibility(View.VISIBLE);
+				iconoerror3.setVisibility(View.VISIBLE);
+				iconoerror4.setVisibility(View.VISIBLE);
+				iconoerror5.setVisibility(View.VISIBLE);
+				break;
+			default:
+				break;
+			}
+		}	
+
+		private void colocarBanderas(){
+			String cadena = pregunta;
+			String subcadena = "argentino";
+
+			if (cadena.indexOf ("argentino") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_argentina);
+				return;
+			}
+			if (cadena.indexOf ("brasilero") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_brasil);
+				return;
+			}
+			if (cadena.indexOf ("alemán") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_alemania);
+				return;
+			}
+			
+			if (cadena.indexOf ("uruguayo") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_uruguay);
+				return;
+			}
+			if (cadena.indexOf ("colombiano") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_colombia);
+				return;
+			}
+			if (cadena.indexOf ("chileno") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_chile);
+				return;
+			}
+			
+			if (cadena.indexOf ("italiano") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_italia);
+				return;
+			}
+			
+			if (cadena.indexOf ("ecuatoriano") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_ecuador);
+				return;
+			}
+			
+			if (cadena.indexOf ("inglés") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_reino_unido);
+				return;
+			}
+			
+			if (cadena.indexOf ("español") != -1){
+				iconosuperior.setImageResource(R.drawable.ban_espa);
+				return;
+			}
+			iconosuperior.setImageResource(R.drawable.diez);
+		}
+
+		private int totaldepreguntas(){
+			// calcula el numero de lineas en el archivo cyatro preguntas
+			int a =0;
+			try
+			{
+				InputStream fraw = getResources().openRawResource(R.raw.mundiales);
+				
+				BufferedReader brin =  new BufferedReader(new InputStreamReader(fraw));
+				while ((linea = brin.readLine()) != null)   {
+					a+=1;
+           			}
+				fraw.close();
+			}
+			catch (Exception ex)
+			{
+				Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+			}
+			return a;
+		}
+
+		private void ponermensaje(CharSequence mensaje){
+		/* es auxiliar para poner mensaje en pantalla*/
+			int duration = Toast.LENGTH_LONG;
+			Toast toast = Toast.makeText(this, mensaje, duration);
+			toast.show();
+		}
+		@Override
+		protected void onResume() {
+			// TODO Auto-generated method stub
+			super.onResume();
+			estado=1;
+		}
+}
+
+
+*********************************************************************
+
+package com.example.mundiales;
+
+import java.text.SimpleDateFormat;
+
+import android.R.raw;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Entrada extends Activity implements OnClickListener {
+	TextView textoPrincipal;
+	Button btnAceptar;
+	EditText edito;
+	ImageView volver_inicio;
+	
+	int mispuntos;
+	String misdatos;
+	String categoria;
+	
+	
+	Boolean correcto;
+	
+	//sonidos aplausos y error
+	SoundPool soundPool;
+	int mal,aplausos;
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.entradanombre);
+		
+		// instancio los view
+		textoPrincipal = (TextView) findViewById(R.id.entnom_txtprincipal);
+		edito = (EditText) findViewById(R.id.editText_entrada);
+		btnAceptar = (Button) findViewById(R.id.entrada_btnaceptar);
+		volver_inicio=(ImageView) findViewById(R.id.imgvolverinicio_entrada);
+		
+		
+		// escucha en el boton y en las imagen
+		btnAceptar.setOnClickListener(this);
+		volver_inicio.setOnClickListener(this);
+		
+
+		soundPool = new SoundPool( 5, AudioManager.STREAM_MUSIC , 0);
+		aplausos=soundPool.load(this, R.raw.aplausos,0);
+		mal=soundPool.load(this, R.raw.error,0);
+		
+		cargartexto();
+		
+		
+	}
+
+	private void cargartexto() {
+		Bundle extras = getIntent().getExtras();
+		mispuntos = extras.getInt("puntos");// recibe puntos
+		misdatos = extras.getString("misdatos");
+		String str = "";
+		// si el valor es muy bajo lo hecho por inútil (por ahora 10 luego subir)
+		if (mispuntos<10){
+			str = "Lo siento tu puntaje es muy bajo para entrar en la lista \n "
+					+ Integer.toString(mispuntos) + "puntos";
+			textoPrincipal.setText(str);
+			this.correcto = false;
+		}else{
+			if (MainActivity.almacen.estoyTop(10, mispuntos)) {
+				str = "Tu puntaje es de "
+						+ Integer.toString(mispuntos)
+						+ "\n"
+						+ "Te felicitamos colocá tu nombre entre los mejores.";
+				edito.setVisibility(View.VISIBLE);
+				this.correcto = true;
+			} else {
+				str = "Lo siento no da el puntaje para entrar entre los mejores";
+				
+				// volver a inicio
+				btnAceptar.setText("Volver");
+				this.correcto = false;
+			}
+		}
+		
+	}
+
+
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+
+		switch (v.getId()) {
+			case R.id.entrada_btnaceptar:
+				if (correcto == true) {
+					soundPool.play(aplausos, 1, 1, 1, 0, 1);
+									categoria = misdatos;
+					MainActivity.almacen.guardarPuntuacion(mispuntos, edito.getText()
+							.toString(), fechaCorta(), categoria);
+					Intent i = new Intent(this, Puntuaciones.class);
+					startActivity(i);
+				} else {
+					//soundPool.play(mal, 1, 1, 1, 0, 1);
+					Intent i = new Intent(this, MainActivity.class);
+					startActivity(i);
+					finish();
+				}
+				break;
+		
+			case R.id.imgvolverinicio_entrada:
+					Context context = getApplicationContext();
+					Intent i = new Intent(context, MainActivity.class);
+					startActivity(i);
+					break;
+	
+			default:
+				break;
+			}
+	}
+
+	
+	/* esta funcion es para formatear la fecha
+	 * actual del sistema
+	 * */
+	public String fechaCorta() {
+		long tim = System.currentTimeMillis();
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyy");
+		String curTime = df.format(tim);
+		return curTime;
+	}
+	
+	/* cuando sale de esta activity la cierra*/
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
+}
+
+***********************************
+
+package com.example.mundiales;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Ajustes extends Activity implements OnClickListener {
+	TextView Categoriatexto;
+	int clasi_jue = 0;
+	int clasi_nivel, velocidad,Juegotipo;
+	String elegidos;
+	int valobarra;
+	
+	private  int VelocidadBaja=40;
+	private  int VelocidadMedia=30;
+	private  int VelocidadAlta=20;
+	
+	private  int NivelBajo=1;
+	private  int NivelMedio=2;
+	private  int NivelAlto=3;
+	
+	private  int erroresdos=1;
+	private  int errorescuatro=3;
+	private  int erroresseis=5;
+	private int cantidaderrores;
+	
+	String mus;
+		
+	
+	ImageView iconochico;
+	Button botoaceptar;
+	Button botocancelar;
+
+	RadioGroup rgOpgame;
+	RadioButton clasico;
+	RadioButton eliminatorio;
+	RadioButton elemental;
+
+	RadioGroup rgOpNivel;
+	
+	RadioButton nivelMedio;
+	RadioButton nivelAlto;
+	
+	RadioGroup rgOpVelocidad;
+	RadioButton rapido;
+	RadioButton medio;
+	RadioButton lento;
+	
+	CheckBox chmusica;
+	CheckBox chborrarpuntos;
+
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.ajustes);
+		
+		
+		// radio games
+		
+		// cantidad de errores
+		rgOpgame = (RadioGroup) findViewById(R.id.radioGroup2);
+		eliminatorio = (RadioButton) findViewById(R.id.radioeliminatorio);// 2 errores
+		clasico = (RadioButton) findViewById(R.id.radioclasico);// 4 errores
+		elemental=(RadioButton) findViewById(R.id.radioseis);// seis errores
+		
+		
+		
+		rgOpNivel = (RadioGroup) findViewById(R.id.radioGroup1);
+		nivelMedio = (RadioButton) findViewById(R.id.radiopreguntasmedias);// medio
+		nivelAlto = (RadioButton) findViewById(R.id.radiopreguntasaltas);// alto
+
+		
+		
+		// radio velocidad
+		rgOpVelocidad = (RadioGroup) findViewById(R.id.radioGroup3);
+		rapido = (RadioButton) findViewById(R.id.radionivelocidadalta);// basico
+		medio = (RadioButton) findViewById(R.id.radionivelocidadmedio);// medio
+		lento = (RadioButton) findViewById(R.id.radiovelocidadlenta);// alto
+
+		botoaceptar =(Button) findViewById(R.id.btnaceptarguardar);
+				
+				
+		// chk borrar y musica
+		chmusica = (CheckBox) findViewById(R.id.chmusicafondo);
+		chborrarpuntos =(CheckBox) findViewById(R.id.chborrarpuntos);
+
+		
+		// poner escuchas10
+		eliminatorio.setOnClickListener(this);
+		clasico.setOnClickListener(this);
+		nivelMedio.setOnClickListener(this);
+		
+		nivelAlto.setOnClickListener(this);
+		rapido.setOnClickListener(this);
+		medio.setOnClickListener(this);
+		lento.setOnClickListener(this);
+		botoaceptar.setOnClickListener(this);
+		
+		colocaranteriores();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		
+		case R.id.imgmenupuntuaciones:
+			Context context = getApplicationContext();
+			Intent i = new Intent(context, MainActivity.class);
+			startActivity(i);
+			break;
+
+		case R.id.btnaceptarguardar://
+			revisar();
+			guardarPreferencias();
+			Intent s = new Intent(this, MainActivity.class);
+			startActivity(s);
+			break; 
+		}
+	}
+
+	
+
+	public void guardarPreferencias() {
+		SharedPreferences prefs = getSharedPreferences("preferenciasMiApp",
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean("preferenciasGuardadas", true);
+		editor.putInt("velocidad", velocidad);
+		editor.putInt("nivel", clasi_nivel);
+		editor.putInt("cantidaderrores", cantidaderrores);
+		
+		if (chmusica.isChecked()){
+			mus="si";
+			editor.putString("musica", "si");
+		}else{
+			mus="no";
+			editor.putString("musica", "no");
+		}
+		
+		
+		editor.commit();
+		/*Toast.makeText(this, "Guardando preferencias velocidad ="+velocidad+ "Musica = "+ mus+
+				"cantidad errores ="+cantidaderrores, Toast.LENGTH_SHORT)
+				.show();*/
+	}
+
+	
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		// borrar los registros si es pedido
+		if (chborrarpuntos.isChecked()){
+			MainActivity.almacen.borrarregistros();
+		}
+		finish();
+	}
+	
+	
+	private void revisar(){
+	if (rapido.isChecked())// velocidades
+		velocidad = VelocidadAlta;
+	if (medio.isChecked())
+		velocidad = VelocidadMedia;
+	if (lento.isChecked())
+		velocidad = VelocidadBaja;
+	
+	if (nivelAlto.isChecked())// nivel de preguntas
+		clasi_nivel = NivelAlto;
+	if (nivelMedio.isChecked())
+		clasi_nivel=NivelMedio;
+	
+	
+	if (eliminatorio.isChecked())
+		cantidaderrores=erroresdos;
+	if (clasico.isChecked())
+		cantidaderrores=errorescuatro;
+	if (elemental.isChecked())
+		cantidaderrores=erroresseis;
+		
+	}
+	
+	private void colocaranteriores(){
+
+		SharedPreferences prefs = getSharedPreferences("preferenciasMiApp",
+				Context.MODE_PRIVATE);
+		
+		// recibe la velocidad ya fijada y si no la hay pone 40
+		int velo = prefs.getInt("velocidad", 40);
+		switch (velo) {
+		case 20:
+			rapido.setChecked(true);
+			break;
+		case 30:
+			medio.setChecked(true);
+			break;
+		case 40:
+			lento.setChecked(true);
+			break;
+
+		default:
+			break;
+		}
+		
+					
+		// recibe la catidad máxima de errore y por defecto pone 4
+		int cantidaderrores = prefs.getInt("cantidaderrores", 4);
+		switch (cantidaderrores) {
+		case 6:
+			elemental.setChecked(true);
+			break;
+		case 4:
+			clasico.setChecked(true);
+			break;
+		case 2:
+			eliminatorio.setChecked(true);
+			break;
+
+		default:
+			break;
+		}
+		
+		String musica=prefs.getString("musica","si" );
+		if (musica.equals("si"))
+			chmusica.setChecked(true);	
+			
+		/*Toast.makeText(this, "Guardando preferencias velocidad ="+velocidad+ "Musica = "+ mus+
+				"cantidad errores ="+cantidaderrores, Toast.LENGTH_SHORT)
+				.show();*/
+	}
+	
+	
+	
+}
+
+
+************************************************************
+
+package com.example.mundiales;
+
+import java.util.Vector;
+
+import android.R.color;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+
+public class MiAdaptador extends BaseAdapter{
+	
+	private final Activity actividad;
+    private final Vector<String> lista;
+    
+    public MiAdaptador(Activity actividad, Vector<String> lista) {
+        super();
+        this.actividad = actividad;
+        this.lista = lista;
+    }
+    
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return lista.size();
+	}
+
+	@Override
+	public Object getItem(int arg0) {
+		// TODO Auto-generated method stub
+		return lista.elementAt(arg0);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+
+		LayoutInflater inflater = actividad.getLayoutInflater();
+        View view = inflater.inflate(R.layout.elemento_lista, null, true);
+        TextView textView =(TextView)view.findViewById(R.id.titulo);
+        
+        
+        textView.setText(lista.elementAt(position));
+        ImageView imageView=(ImageView)view.findViewById(R.id.icono);
+        TextView textViewsub =(TextView)view.findViewById(R.id.subtitulo);
+        //TextView txtestadistica=(TextView)view.findViewById(R.id.txtestadistica);
+        textViewsub.setTextSize(R.dimen.chiquito);
+        //txtestadistica.setTextSize(R.dimen.chiquito);
+        textView.setTypeface(null, Typeface.BOLD);
+        
+       
+        
+        // hacer loop
+        
+        switch (position) {
+		case 0:
+			textViewsub.setText("Genial sos el uno");
+            imageView.setImageResource(R.drawable.trofeo);
+            textView.setBackgroundColor(Color.BLUE);
+            textView.setTextColor(Color.WHITE);
+            textView.setTextSize(15);
+            textViewsub.setTextSize(15);
+            
+			break;
+		case 1:
+			textViewsub.setText("Muy bueno");
+			//txtestadistica.setText("Estadística");
+			imageView.setImageResource(R.drawable.trofeoplata);
+            textViewsub.setTextSize(9);
+            textView.setTextSize(12);
+            
+            break;
+		case 2:
+			textViewsub.setText("Adelante");
+            imageView.setImageResource(R.drawable.medallabornce);
+            //txtestadistica.setText("Estadística");
+            textViewsub.setTextSize(9);
+            textView.setTextSize(10);
+			break;	
+		case 3:
+			textViewsub.setText("Fuerza che!!");
+			imageView.setImageResource(R.drawable.diploma);
+			//txtestadistica.setText("Estadística");
+			textViewsub.setTextSize(9);
+			textView.setTextSize(10);
+			break;
+		case 4:
+			textViewsub.setText("Fuerza che!!");
+			imageView.setImageResource(R.drawable.diploma);
+			textViewsub.setTextSize(9);
+			textView.setTextSize(10);
+			break;
+		case 5:
+			textViewsub.setText("Premio Vino Tinto");
+			imageView.setImageResource(R.drawable.botellavino);
+			//txtestadistica.setText("Estadística");
+			textViewsub.setTextSize(9);
+			textView.setTextSize(10);
+			break;
+		case 6:
+			textViewsub.setText("Premio Chivito Canadiense");
+			imageView.setImageResource(R.drawable.hamburguesa);
+			//txtestadistica.setText("Estadística");
+			textViewsub.setTextSize(9);
+			textView.setTextSize(10);
+			break;	
+		default:
+			textViewsub.setText("No aflojar");
+			//txtestadistica.setText("Estadística");
+			//textViewsub.setTextSize(R.dimen.chiquito);
+			imageView.setImageResource(R.drawable.diploma);
+			textViewsub.setTextSize(9);
+			textView.setTextSize(10);
+			break;
+		}
+        
+        
+
+        return view;
+	}
+
+	
+	
+	}
+
+********************************************************************************
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+
+       <ImageView android:id="@+id/icono"
+
+              android:layout_width="?android:attr/listPreferredItemHeight"
+
+             android:layout_height="fill_parent"
+
+             android:layout_alignParentLeft="true"
+
+             android:src="@drawable/trofeo"/>
+
+       <TextView android:id="@+id/titulo"
+
+              android:layout_width="fill_parent"
+
+             android:layout_height="wrap_content"
+
+             android:layout_toRightOf="@id/icono"
+
+             android:layout_alignParentTop="true"
+
+             android:textAppearance="?android:attr/textAppearanceLarge"
+
+             android:singleLine="true" />
+
+       <TextView
+           android:id="@+id/subtitulo"
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           android:layout_alignParentBottom="true"
+           android:layout_below="@id/titulo"
+           android:layout_toRightOf="@id/icono"
+           android:gravity="center"
+           android:text="Otro Texto"
+           android:textSize="@dimen/chiquito" />
+
+</RelativeLayout>
+
+
+**************************************************************
+
+package com.example.mundiales;
+
+import android.app.ListActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Puntuaciones extends ListActivity implements OnClickListener{
+	
+	MiAdaptador adapter=new MiAdaptador(this,
+    MainActivity.almacen.listaPuntuaciones(10,"chinito sabe"));
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// TODO Auto-generated method stub
+		super.onListItemClick(l, v, position, id);
+		Toast.makeText(this, "Id: " + adapter.getItem(position), Toast.LENGTH_LONG).show();
+		//Intent i = new Intent(this, Resumen.class);
+		//String posible=String.valueOf(position);
+		
+		//i.putExtra("posicion", posible);
+		//startActivity(i);
+	}
+
+	ImageView menuinicial;
+	ImageView volverCancha;
+	public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.puntuaciones);
+        
+        menuinicial=(ImageView) findViewById(R.id.imgmenupuntuaciones);
+        menuinicial.setOnClickListener(this);
+        
+        volverCancha=(ImageView) findViewById(R.id.imgVolverCancha);
+        volverCancha.setOnClickListener(this);
+        
+        //estadistica=(TextView) findViewById(R.id.txtestadistica);
+
+        //setListAdapter(new MiAdaptador(this, MenuInicio.almacen.listaPuntuaciones(10)));
+        setListAdapter(adapter);
+        
+    }
+
+	public void onClick(View v) {
+	switch (v.getId()) {
+	case R.id.imgVolverCancha:
+		Intent i = new Intent(this, CanchaMundiales.class);
+		startActivity(i);
+		break;
+	case R.id.imgmenupuntuaciones:
+		Intent te = new Intent(this, MainActivity.class);
+		startActivity(te);
+		break;
+	default:
+		break;
+	}
+}
+	
+	// cerrar la activity
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
+	
+	// no se estan usando las categorias
+	private String cargar_categoria(){
+		Bundle extras = getIntent().getExtras();
+		return extras.getString("cate");// recibe categoria
+	}
+}
+
+
+****************************************************************
+
+package com.example.urutrivia;
+
+import android.app.ListActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Puntuaciones extends ListActivity implements OnClickListener{
+	
+	MiAdaptador adapter=new MiAdaptador(this,
+            MenuInicio.almacen.listaPuntuaciones(10,"chinito sabe"));
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// TODO Auto-generated method stub
+		super.onListItemClick(l, v, position, id);
+		Toast.makeText(this, "Id: " + adapter.getItem(position), Toast.LENGTH_LONG).show();
+		Intent i = new Intent(this, Resumen.class);
+		String posible=String.valueOf(position);
+		
+		i.putExtra("posicion", posible);
+		startActivity(i);
+	}
+
+	ImageView menuinicial;
+	public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.puntuaciones);
+        
+        menuinicial=(ImageView) findViewById(R.id.imgmenupuntuaciones);
+        menuinicial.setOnClickListener(this);
+        //estadistica=(TextView) findViewById(R.id.txtestadistica);
+
+        //setListAdapter(new MiAdaptador(this, MenuInicio.almacen.listaPuntuaciones(10)));
+        setListAdapter(adapter);
+        
+    }
+
+	public void onClick(View v) {
+	switch (v.getId()) {
+	case R.id.imgmenupuntuaciones:
+		Context context = getApplicationContext();
+		Intent i = new Intent(context, MenuInicio.class);
+		startActivity(i);
+		break;
+	
+	default:
+		break;
+	}
+}
+	
+	// cerrar la activity
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
+	
+	// no se estan usando las categorias
+	private String cargar_categoria(){
+		Bundle extras = getIntent().getExtras();
+		return extras.getString("cate");// recibe categoria
+	}
+}
+
+
+*********************************************************************************
+package com.example.urutrivia;
+
+import java.util.Vector;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class Resumen extends Activity{
+
+	TextView nombre;
+	TextView aciertoGeneral;
+	TextView aciertoGeo;
+	TextView aciertoFutbol;
+	TextView aciertoDeportes;
+	TextView aciertoLun;
+	TextView aciertoLiteratura;
+	
+	TextView erroresGeneral;
+	TextView erroresGeo;
+	TextView erroresFutbol;
+	TextView erroresDeportes;
+	TextView erroresLun;
+	TextView erroresLiteratura;
+	
+	TextView dificiles;
+	TextView medios;
+	TextView basicos;
+	
+	TextView segundospromedio;
+	
+	String posicion;
+	//String misdatos;
+	
+	
+	Vector<String> listita;
+	
+	
+protected void onCreate(Bundle savedInstanceState) {
+	// TODO Auto-generated method stub
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.resumen);
+	
+	
+	
+    listita = MenuInicio.almacen.estadistica(10);
+
+    nombre=(TextView) findViewById(R.id.txtresumennobre);
+    aciertoGeneral =(TextView) findViewById(R.id.txtresumengeneral);
+    aciertoGeo=(TextView) findViewById(R.id.txtresumengeo);
+    aciertoFutbol = (TextView) findViewById(R.id.txtresumenfutbol);
+    aciertoDeportes =(TextView) findViewById(R.id.txtresumendeportes);
+    aciertoLun= (TextView) findViewById(R.id.txtresumenlunfardo);
+    aciertoLiteratura =(TextView) findViewById(R.id.txtresumenliteratura);
+    
+    erroresGeneral=(TextView) findViewById(R.id.txterroresgeneral);
+	erroresGeo= (TextView)findViewById(R.id.txterroresgeo);
+	erroresFutbol=(TextView)findViewById(R.id.txterroresfutbol);
+	erroresDeportes=(TextView)findViewById(R.id.txterroresdeportes);
+	erroresLun=(TextView)findViewById(R.id.txterroreslunfardo);
+	erroresLiteratura=(TextView)findViewById(R.id.txterroresliteratura);
+    
+	dificiles= (TextView) findViewById(R.id.txtdificil);
+	medios=(TextView) findViewById(R.id.txtmedias);
+	basicos=(TextView) findViewById(R.id.txtbasicas);
+	
+	segundospromedio=(TextView) findViewById(R.id.txttiempopromedio);
+	leerdatos();
+    colocardatos();
+}
+
+private void leerdatos(){
+	Bundle extras = getIntent().getExtras();
+	posicion =extras.getString("posicion");
+	//misdatos = extras.getString("misdatos");
+}
+
+private void colocardatos(){
+	
+	int posi=Integer.valueOf(posicion);	
+	String[] parts = listita.get(posi).split(" ");
+	
+		
+	nombre.setText("Estos son los datos de tu  tu puntaje. " );
+	//nombre.setText(parts[(parts.length-1)]);
+	
+	
+	String[] valorespuntos = parts[(parts.length-1)].split(",");
+	
+	aciertoGeneral.setText("Lunfardo .."+valorespuntos[10].substring(1, valorespuntos[10].length()-3));
+	erroresGeneral.setText("Lunfardo .."+valorespuntos[11].substring(1, valorespuntos[11].length()-3));
+	
+	aciertoDeportes.setText("Deportes...."+valorespuntos[2].substring(1, valorespuntos[6].length()-1));
+	erroresDeportes.setText("Deportes.."+valorespuntos[3].substring(1, valorespuntos[7].length()-1));
+	
+	aciertoFutbol.setText("Fútbol uruguayo.."+valorespuntos[4].substring(1, valorespuntos[6].length()-1));
+	erroresFutbol.setText("Fútbol uruguayo.."+valorespuntos[5].substring(1, valorespuntos[7].length()-1));
+	
+	aciertoLiteratura.setText("Literarura nacional..."+valorespuntos[6].substring(1, valorespuntos[8].length()-1));
+	erroresLiteratura.setText("Literarura nacional..."+valorespuntos[7].substring(1, valorespuntos[9].length()-1));
+	
+	aciertoGeo.setText("Geografía...."+valorespuntos[8].substring(1, valorespuntos[6].length()-1));
+	erroresGeo.setText("Geografía.."+valorespuntos[9].substring(1, valorespuntos[7].length()-1));
+	
+	
+	aciertoLun.setText("General y costumbres.."+valorespuntos[0].substring(1, valorespuntos[0].length()-3));//lun
+	erroresLun.setText("General y costumbres.."+valorespuntos[1].substring(1, valorespuntos[1].length()-3));
+	
+	dificiles.setText("Preguntas dificiles .."+valorespuntos[12]);
+	medios.setText("Preguntas medias ..."+valorespuntos[13]);
+	basicos.setText("Preguntas fáciles ..."+valorespuntos[14]);
+	
+	//segundospromedio.setText("Promedio de segundos por pregunta .."+valorespuntos[15]);
+	
+	
+	
+}
+}
+
+******************************************************************
+
+package com.example.urutrivia;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Layout;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+
+
+public class CanchaUruTrivia extends Activity implements OnClickListener{
+	
+	TextView secpregunta,sector1,sector2,sector3,sector4;
+	TextView tiempo, placard;
+	ImageView iconoerror1,iconoerror2,iconoerror3,iconoerror4,iconoerror5,iconosuperior;
+	ImageView menuinicial;
+	Button btnEmpezar;
+	TextView paraBetty;
+	Button flecha;
+	TextView tema;// para el letrito del tema
+	LinearLayout linearLayout;
+	
+	
+	
+	Utiles calculos;// sortea el orden de los aciertos, etc
+	
+	// variables de aciertos
+	String cierto = "";
+	String error1 = "";
+	String error2 = "";
+	String error3 = "";
+	String pregunta = "";
+	String acierto = "";
+	String temasortedo;
+	String nivel;
+	
+	// contadores de estadistica
+	int contadoraciertolun,contadorerrorlun;
+	int contadoraciertodepor,contadorerrordepor;
+	int contadoraciertogeo,contadorerrorgeo;
+	int contadoraciertofut,contadorerrorfut;
+	int contadoraciertolit,contadorerrorlit;
+	int contadoraciertogen,contadorerrorgen;
+	int altas,medias,basicas;
+	int contadorsegundos;
+	int cantidadpreguntas;
+	
+	String misdatos="";// junta los aciertos y errores etc
+	
+	
+	String orden;// almacena el orden de colocar los aciertos	
+	
+	int puntaje = 0; // puntaje inicial
+	int errores = 0;// cantidad de errores a
+	int cantidaderrores;
+	
+	
+	String linea = null;
+	int claro=0;
+	int oscuro=1;
+	int rojo =0;
+	int azul =1;
+	int verde=2;
+	int naranja=3;
+	
+	
+	// sonidos cortos
+	SoundPool soundPool;
+	int bien, mal;
+	
+	//Variables de tiempo y preferencias
+	int time_elegido;// ojo aqui podria venir el tiempo leido
+	Timer timer;
+	Handler handler=new Handler();
+	int rate = 1000; //repite cada segundo
+	int time=0; // contador de tiempo
+	
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.cancha);
+		
+		// instancia las variables con los recursos
+		secpregunta = (TextView) findViewById(R.id.pregunta);// pregunta
+		sector1 = (TextView) findViewById(R.id.txtresumengeneral);// errores
+		sector2 = (TextView) findViewById(R.id.txtdificil);
+		sector3 = (TextView) findViewById(R.id.textView4);
+		sector4 = (TextView) findViewById(R.id.provisorio);
+		tiempo = (TextView) findViewById(R.id.tiempo);// ojo es el tiempo
+		btnEmpezar = (Button) findViewById(R.id.btnEmpezar);
+		placard = (TextView) findViewById(R.id.puntos);
+		tema = (TextView) findViewById(R.id.temacancha);
+		linearLayout = (LinearLayout) findViewById(R.id.cero);
+		iconoerror1=(ImageView) findViewById(R.id.iconoimagen1);//  ic errores
+		iconoerror2=(ImageView) findViewById(R.id.imageViewdos);
+		iconoerror3=(ImageView) findViewById(R.id.iconoimagen3);
+		iconoerror4=(ImageView) findViewById(R.id.iconoimagen4);
+		iconoerror5=(ImageView) findViewById(R.id.iconoimagen5);
+		
+		iconosuperior=(ImageView) findViewById(R.id.iconoimagensuperior);
+		paraBetty=(TextView) findViewById(R.id.txtparabetty);// num provisorio
+		menuinicial=(ImageView) findViewById(R.id.imgmenupuntuaciones);// vuelta al inicio
+		flecha=(Button) findViewById(R.id.flecha);// pasa a puntuaciones
+	
+		// coloca los escucha (listener)
+		sector1.setOnClickListener(this);
+		sector2.setOnClickListener(this);
+		sector3.setOnClickListener(this);
+		sector4.setOnClickListener(this);
+		btnEmpezar.setOnClickListener(this);
+		menuinicial.setOnClickListener(this);
+		flecha.setOnClickListener(this);
+		
+		// instancia auxiliar para calculos
+		calculos=new Utiles();
+		
+		// leer tiempo_elegido y nivel ...
+		cargarPreferencias();
+		replantearerrores();
+		
+		// tiempo
+		timer= new Timer("Temporizador");
+		Tarea tarea=new Tarea();
+		timer.scheduleAtFixedRate(tarea,0,rate);
+				
+		// sonido
+		soundPool = new SoundPool( 5, AudioManager.STREAM_MUSIC , 0);
+		bien = soundPool.load(this, R.raw.bien, 0);
+		mal = soundPool.load(this, R.raw.error, 0);
+			
+	}
+	
+	
+	class Tarea extends TimerTask{
+    	@Override
+    	public void run() {
+    		Runnable cambiaTexto=new Cambia();
+    		handler.post(cambiaTexto);
+    	}	
+    }
+
+	class Cambia implements Runnable {
+		public void run() {
+			//solo empieza a procesar si time es mayor que cero
+			if (time>0) {
+				time=time+1;// coloca el reloj	
+				int m= (time_elegido-time);
+				String cadena= Integer.toString(m);
+				tiempo.setText(cadena);
+			
+				if (time==time_elegido){
+					// Se acabo el tiempo sin contestar
+					errores +=1;// si ya hay 3 errores
+					//time=0;// cero para no contar mas
+					puntaje(-10);// metodo sobreescrito
+				}
+			}
+		}
+	}
+	
+	
+	private String leerlinea(){
+		// una linea del archivo al azar ojo numlineas
+		int numlineas =1450;
+		int lineaelegida=(int) (Math.random() * numlineas + 1);
+	// lee un archivo de nombre cuatrorespuestas previamente colocado
+	try
+	{
+	    InputStream fraw = getResources().openRawResource(R.raw.cuatrorespuestas);
+	    int a =0;
+	    BufferedReader brin =  new BufferedReader(new InputStreamReader(fraw));
+	    while ((linea = brin.readLine()) != null)   {
+            a+=1;
+            if (a==lineaelegida){
+            	fraw.close();
+            	return linea;
+            }
+        }
+        fraw.close();
+	}
+	catch (Exception ex)
+	{
+	    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+	}
+	return linea;
+	}
+	
+	// transforma la linea en una matriz
+	private void desarmar(String datoleido){
+		//String string = datoleido;
+		String[] parts = datoleido.split(";");
+		//0 es numero de pregunta 1 la pregunta ...
+		cierto=parts[2]; 
+		error1=parts[3];//cierto
+		error2=parts[4];// error1
+		error3=parts[5];// error2
+		temasortedo=parts[6];// tema sorteado
+		nivel=parts[7];
+		pregunta=parts[1];
+		paraBetty.setText(parts[0]);//coloca el numero para testear
+	}
+
+	
+	//**** escuchas de click
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+		// en los sectores compara variables string, manda a puntaje y suena
+		case R.id.txtresumengeneral:// Si el id del botón pulsado se corresponde con el
+			if (acierto.equals("sector1")) {
+				puntaje(10, sector1);
+				 soundPool.play(bien, 1, 1, 1, 0, 1);
+			} else {
+				errores += 1;
+				soundPool.play(mal, 1, 1, 1, 0, 1);
+				puntaje(-10, sector1);
+			}
+			break;
+		case R.id.txtdificil:
+			if (acierto.equals("sector2")) {
+				puntaje(10, sector2);
+				soundPool.play(bien, 1, 1, 1, 0, 1);
+			} else {
+				errores += 1;
+				soundPool.play(mal, 1, 1, 1, 0, 1);
+				puntaje(-10, sector2);
+			}
+			break;
+		case R.id.textView4:
+			if (acierto.equals("sector3")) {
+				puntaje(10, sector3);
+				soundPool.play(bien, 1, 1, 1, 0, 1);
+			} else {
+				errores += 1;
+				soundPool.play(mal, 1, 1, 1, 0, 1);
+				puntaje(-10, sector3);
+			}
+			break;
+		case R.id.provisorio:
+			if (acierto.equals("sector4")) {
+				puntaje(10, sector4);
+				soundPool.play(bien, 1, 1, 1, 0, 1);
+			} else {
+				errores += 1;
+				soundPool.play(mal, 1, 1, 1, 0, 1);
+				puntaje(-10, sector4);
+			}
+			break;
+		
+		//en el boton Preguntar
+		case R.id.btnEmpezar:
+			nueva_jugada();// seria nueva version larga sin tiempo
+			break;
+		case R.id.imgmenupuntuaciones:
+			Context context = getApplicationContext();
+			Intent i = new Intent(context, MenuInicio.class);
+			startActivity(i);
+			//finish();
+			break;
+		case R.id.flecha:
+			//Context context = getApplicationContext();
+			Intent ir = new Intent(this, Entrada.class);
+			ir.putExtra("puntos", puntaje);
+			startActivity(ir);
+			//finish();
+			break;
+		}
+	}
+	
+	
+	public void nueva_jugada(){
+		// ojo debe leer y no cambiar?
+		desarmar(leerlinea());
+		time=1;// permite empezar a contar
+		
+		//secpregunta.setText(pregunta);
+		orden = calculos.sortearPosibilidad();// sortea el orden
+		colocar(orden);// coloca en funcion del orden 
+		sector1.setBackgroundColor(Color.TRANSPARENT);// deja transparente
+		sector2.setBackgroundColor(Color.TRANSPARENT);
+		sector3.setBackgroundColor(Color.TRANSPARENT);
+		sector4.setBackgroundColor(Color.TRANSPARENT);
+		btnEmpezar.setVisibility(View.INVISIBLE);// deja en boton invisible hasta que ...	
+	}
+	
+	// método para colocar los strings en las ventanas
+	public void colocar(String orden) {
+			// coloca la pregunta leida			
+			secpregunta.setText(pregunta);// coloca la pregunta
+			colocartema();
+			// en funcion de la ubicación de la letra "c" y ..
+			// analizamos cada ubicacion de los digitos
+			//colocamos las string en los text y si corresponde el acierto
+			String primeraletra = orden.substring(0, 1);
+			if (primeraletra.equals("c")) {
+				sector1.setText(cierto);
+				acierto = "sector1";
+			}
+			if (primeraletra.equals("1"))
+				sector1.setText(error1);
+			if (primeraletra.equals("2"))
+				sector1.setText(error2);
+			if (primeraletra.equals("3"))
+				sector1.setText(error3);//
+			// segunda letra
+			String segundaletra = orden.substring(1, 2);
+			if (segundaletra.equals("c")) {
+				sector2.setText(cierto);
+				acierto = "sector2";
+			}
+			if (segundaletra.equals("1"))
+				sector2.setText(error1);
+			if (segundaletra.equals("2"))
+				sector2.setText(error2);
+			if (segundaletra.equals("3"))
+				sector2.setText(error3);
+			// tercera letra
+			String terceraletra = orden.substring(2, 3);
+			if (terceraletra.equals("c")) {
+				sector3.setText(cierto);
+				acierto = "sector3";
+			}
+			if (terceraletra.equals("1"))
+				sector3.setText(error1);
+			if (terceraletra.equals("2"))
+				sector3.setText(error2);
+			if (terceraletra.equals("3"))
+				sector3.setText(error3);
+			// cuarta letra
+			String cuartaletra = orden.substring(3, 4);
+			if (cuartaletra.equals("c")) {
+				sector4.setText(cierto);
+				acierto = "sector4";
+			}
+			if (cuartaletra.equals("1"))
+				sector4.setText(error1);
+			if (cuartaletra.equals("2"))
+				sector4.setText(error2);
+			if (cuartaletra.equals("3"))
+				sector4.setText(error3);
+		}
+		
+		
+	// puntaje derivado del click
+	private void puntaje(int valor, TextView sector) {
+			puntaje += valor;// suma el valor recibido
+			time=0;// para la cuenta
+			
+			
+			dibujarerrores(errores);// revisa si hay que poner iconos
+						
+			String str = Integer.toString(puntaje);// placard
+			placard.setText(str);
+						
+			// si es acierto o no 
+			if(valor>0){
+				sector.setBackgroundColor(Color.GREEN);
+				btnEmpezar.setVisibility(View.VISIBLE);
+				guardaraciertos(1,nivel,temasortedo);
+				
+				
+			}else{
+				sector.setBackgroundColor(Color.RED);
+				revisarelcorrecto();// pinta el correcto
+				//si hay mas de 3 errores debe salir
+				guardaraciertos(0,nivel,temasortedo);
+				
+				
+				
+				if (errores>cantidaderrores){
+					pasar_final();
+					return;
+				}else{
+					btnEmpezar.setVisibility(View.VISIBLE);
+				}
+			}
+		}
+
+		// esta sobreescrita por si no hay click y si demora
+	private void puntaje(int valor) {
+			puntaje += valor;// suma el valor
+			time=0;// para la cuenta
+			
+			dibujarerrores(errores);
+						
+			String str = Integer.toString(puntaje);// placard
+			placard.setText(str);
+						
+			revisarelcorrecto();// pinta el correcto
+			
+			guardaraciertos(0,nivel,temasortedo);
+			
+			//pasar_resultado_pregunta("Error");
+			if (errores>cantidaderrores){
+				pasar_final();
+				return;
+			}else{
+				btnEmpezar.setVisibility(View.VISIBLE);
+			}
+		}
+		
+		
+		// cambia a la pantalla que da o no entrada de puntos		
+	public void pasar_final(){
+			// me avisa de los errores y pasa a entrada de nombre		
+			Context context = getApplicationContext();
+			CharSequence text = "Lo siento son mas de "+ cantidaderrores +" errores!";
+			int duration = Toast.LENGTH_LONG;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			estadistica();
+			// pasa y envia el dato
+			Intent te = new Intent( context, Entrada.class);
+			te.putExtra("puntos", puntaje);
+			te.putExtra("misdatos", misdatos);
+			startActivity(te);
+		}
+		
+		// coloca el verde en el sector correcto
+	private void revisarelcorrecto(){
+			
+			if (sector1.getText().equals(cierto)){
+				sector1.setBackgroundColor(Color.GREEN);
+				return;
+			}
+			if (sector2.getText().equals(cierto)){
+				sector2.setBackgroundColor(Color.GREEN);
+				return;
+			}
+			if (sector3.getText().equals(cierto)){
+				sector3.setBackgroundColor(Color.GREEN);
+				return;
+			}
+			if (sector4.getText().equals(cierto)){
+				sector4.setBackgroundColor(Color.GREEN);
+				return;
+			}
+		}
+		
+		
+		// coloca el icono en funcion del error 
+	private void dibujarerrores(int err){
+			switch (err) {
+			case 1:
+				iconoerror1.setImageResource(R.drawable.caritatachada);
+				break;
+			case 2:
+				iconoerror1.setImageResource(R.drawable.caritatachada);
+				iconoerror2.setImageResource(R.drawable.caritatachada);
+				break;
+			case 3:
+				iconoerror1.setImageResource(R.drawable.caritatachada);
+				iconoerror2.setImageResource(R.drawable.caritatachada);
+				iconoerror3.setImageResource(R.drawable.caritatachada);
+				break;
+			case 4:
+				iconoerror1.setImageResource(R.drawable.caritatachada);
+				iconoerror2.setImageResource(R.drawable.caritatachada);
+				iconoerror3.setImageResource(R.drawable.caritatachada);
+				iconoerror4.setImageResource(R.drawable.caritatachada);
+				break;
+			case 5:
+				iconoerror1.setImageResource(R.drawable.caritatachada);
+				iconoerror2.setImageResource(R.drawable.caritatachada);
+				iconoerror3.setImageResource(R.drawable.caritatachada);
+				iconoerror4.setImageResource(R.drawable.caritatachada);
+				iconoerror5.setImageResource(R.drawable.caritatachada);
+				break;	
+			default:
+				break;
+			}
+		}
+		
+		
+		// preferencias 
+	public void cargarPreferencias() {
+			// por ahora solo cargamos el tiempo_elegido
+			SharedPreferences prefs = getSharedPreferences("preferenciasMiApp",
+					Context.MODE_PRIVATE);
+			// por si no hay coloca vel ponemos 50
+			this.time_elegido = prefs.getInt("velocidad", 50);
+			this.cantidaderrores=prefs.getInt("cantidaderrores", 3);
+		}
+
+		// cerrar la activity
+	protected void onPause() {
+			super.onPause();
+			finish();
+		}
+		
+		// colocar tema
+		@SuppressLint("ResourceAsColor")
+	private void colocartema(){
+			String str = "Hola" + temasortedo;
+			tema.setText(str);
+			str='"'+"Lun"+'"';
+			
+			if (temasortedo.equals(str)){
+				tema.setText('"'+"Lunfardo"+'"');
+				int imselec = (int) (Math.random() * 3 + 1);
+				linearLayout.setBackgroundResource(R.drawable.fondo);
+				btnEmpezar.setBackgroundResource(R.drawable.fondoboton);
+							
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic18);
+					break;
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic17);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+				return;
+			}
+			
+			str='"'+"Gen"+'"';
+			if (temasortedo.equals(str)){
+				tema.setText("General");
+				linearLayout.setBackgroundResource(R.drawable.rojo);
+				btnEmpezar.setBackgroundResource(R.drawable.rojoboton);
+
+				int imselec = (int) (Math.random() * 3 + 1);
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic3);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic6);
+					break;
+					
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic19);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+				return;
+			}
+			
+			str='"'+"F"+'"';
+			if (temasortedo.equals(str)){
+				tema.setText("Fútbol");
+				linearLayout.setBackgroundResource(R.drawable.amarillo);
+				btnEmpezar.setBackgroundResource(R.drawable.amarilloboton);
+				int imselec = (int) (Math.random() * 3 + 1);
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic5);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic6);
+					break;
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic19);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+			}
+			
+			str='"'+"D"+'"';
+			if (temasortedo.equals(str)){
+				tema.setText("Deportes");
+				linearLayout.setBackgroundResource(R.drawable.naranja);
+				btnEmpezar.setBackgroundResource(R.drawable.naranjaboton);
+				int imselec = (int) (Math.random() * 3 + 1);
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic4);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic6);
+					break;
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic19);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+			}
+			
+			str='"'+"G"+'"';
+			if (temasortedo.equals(str)){
+				tema.setText("Geografía");
+				linearLayout.setBackgroundResource(R.drawable.verde);
+				btnEmpezar.setBackgroundResource(R.drawable.verdeboton);
+				int imselec = (int) (Math.random() * 3 + 1);
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic8);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic10);
+					break;
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic12);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+			}
+			
+			str='"'+"L"+'"';
+			if (temasortedo.equals(str)){
+				tema.setText("Literatura");
+				linearLayout.setBackgroundResource(R.drawable.negro);
+				btnEmpezar.setBackgroundResource(R.drawable.negroboton);
+				int imselec = (int) (Math.random() * 3 + 1);
+				switch (imselec) {
+				case 1:
+					iconosuperior.setImageResource(R.drawable.ic7);
+					break;
+				case 2:
+					iconosuperior.setImageResource(R.drawable.ic6);
+					break;
+				case 3:
+					iconosuperior.setImageResource(R.drawable.ic19);
+					break;
+				default:
+					iconosuperior.setImageResource(R.drawable.ic13);
+					break;
+				}
+			}
+		}
+		
+	private void guardaraciertos(int acierto,String nivel,String temasortedo){
+			
+			//Estadisticas Lunfardos
+			if (temasortedo.equals('"'+"Lun"+'"')){
+				if (acierto==1){
+					contadoraciertolun += 1;
+				}else{
+					contadorerrorlun += 1;
+				}
+			}
+			
+			//Estadisticas Deportes
+			if (temasortedo.equals('"'+"D"+'"')){
+				if (acierto==1){
+					contadoraciertodepor += 1;
+				}else{
+					contadorerrordepor += 1;
+				}
+			}
+			
+			//Estadisticas Geografia
+			if (temasortedo.equals('"'+"G"+'"')){
+				if (acierto==1){
+					contadoraciertogeo += 1;
+				}else{
+					contadorerrorgeo += 1;
+				}
+			}
+			
+			//Estadisticas Fútbol
+			if (temasortedo.equals('"'+"F"+'"')){
+				if (acierto==1){
+					contadoraciertofut += 1;
+				}else{
+					contadorerrorfut += 1;
+				}
+			}
+			
+			//Estadisticas literatura
+			if (temasortedo.equals('"'+"L"+'"')){
+				if (acierto==1){
+					contadoraciertolit += 1;
+				}else{
+					contadorerrorlit += 1;
+				}
+			}
+			
+			//Estadisticas General
+			if (temasortedo.equals('"'+"Gen"+'"')){
+				if (acierto==1){
+					contadoraciertogen += 1;
+				}else{
+					contadorerrorgen += 1;
+				}
+			}
+			
+			// dificultad
+			
+			if (nivel.equals("A")){
+				altas+=1;
+			}
+			
+			if (nivel.equals("M")){
+				medias+=1;
+			}
+			
+			if (nivel.equals("B")){
+				basicas+=1;
+			}
+			
+			contadorsegundos += (20- Integer.parseInt((String) tiempo.getText()));
+			cantidadpreguntas+=1;
+	
+	}
+	
+		// crear string estadistica
+	private String estadistica(){
+			// 0 o 1 por acierto cantidad y tema mas coma 
+			
+			// aciertos y errores general
+			String agen="1"+contadoraciertogen+"Gen";
+			String errorgen= "0"+contadorerrorgen+"Gen";
+			
+			// aciertos y errores deportes
+			String adep="1"+contadoraciertodepor+"D";
+			String errordep= "0"+contadorerrordepor+"D";
+			
+			// aciertos y errores futbol
+			String afut="1"+contadoraciertofut+"F";
+			String errorfut= "0"+contadorerrorfut+"F";
+			
+			// aciertos y errores literatura
+			String alit="1"+contadoraciertolit+"L";
+			String errorlit= "0"+contadorerrorlit+"L";
+			
+			// aciertos y errores geografia
+			String ageo="1"+contadoraciertogeo+"G";
+			String errorgeo= "0"+contadorerrorgeo+"G";
+			
+			// aciertos y errores lunfardo
+			String alun="1"+contadoraciertolun+"Lun";
+			String errorlun= "0"+contadorerrorlun+"Lun";
+			
+			//dificultad de las preguntas
+			// promedios
+			contadorsegundos=(contadorsegundos/cantidadpreguntas);
+			
+			misdatos= agen + "," + errorgen + "," + adep + "," + errordep +
+					","+ afut +","+ errorfut + "," + alit + "," + errorlit +
+					"," + ageo +"," + errorgeo +"," + alun +","+ errorlun+
+					","+altas+","+medias+","+basicas+","+ contadorsegundos;
+			
+			
+					
+					return misdatos;
+			
+		}
+	
+	private void replantearerrores(){
+	switch (cantidaderrores) {
+	case 1:
+		// dejar visible solo 1 iconos
+		iconoerror1.setVisibility(View.VISIBLE);
+		break;
+	case 3:
+		// dejar visible solo 3 iconos
+		iconoerror1.setVisibility(View.VISIBLE);
+		iconoerror2.setVisibility(View.VISIBLE);
+		iconoerror3.setVisibility(View.VISIBLE);
+		break;
+	case 5:
+		// dejar visible solo 5 iconos
+		iconoerror1.setVisibility(View.VISIBLE);
+		iconoerror2.setVisibility(View.VISIBLE);
+		iconoerror3.setVisibility(View.VISIBLE);
+		iconoerror4.setVisibility(View.VISIBLE);
+		iconoerror5.setVisibility(View.VISIBLE);
+		break;
+	default:
+		break;
+	}
+}	
+}
+
+
+	
+
+	
+

@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <!-- Heather aligned to bottom -->
+
+    <include layout="@layout/header" />
+
+    <!-- Footer aligned to bottom -->
+
+    <include layout="@layout/footer" />
+
+    <Button
+            android:id="@+id/btnsalir"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_above="@+id/content1"
+            android:layout_below="@+id/header" 
+            android:layout_alignParentRight="true"
+            android:background="@drawable/star_button"
+             android:text="X"
+            android:textColor="@color/white" />
+    
+    
+    <!-- Conteiner Principal -->
+<!-- margin es menor al normal, no tiene padding  -->
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/btnsalir"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/panel"
+        android:gravity="center"
+        android:orientation="vertical"
+         >
+
+     
+
+        <Button
+            android:id="@+id/btnaPuntaje"
+            style="@style/custombutton.small"
+            android:text="@string/boton1" />
+
+        <Button
+            android:id="@+id/button4"
+            style="@style/custombutton.small"
+            
+            android:text="@string/boton4" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/custombutton.small"
+            android:text="@string/boton3" />
+
+        <Button
+            android:id="@+id/btnCancelar"
+            style="@style/custombutton.small"
+            
+            android:text="@string/boton2" />
+
+    
+    </LinearLayout>
+    
+</RelativeLayout>

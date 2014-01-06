@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <!-- Heather aligned to bottom -->
+
+    <include layout="@layout/header" />
+
+    <!-- Footer aligned to bottom -->
+
+    <include layout="@layout/footer" />
+
+    <Button
+        android:id="@+id/btnsalir"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/header"
+        android:background="@drawable/star_button"
+        android:text="X"
+        android:textColor="@color/white" />
+
+    <!-- Conteiner Principal -->
+
+    <TableLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnsalir"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/panel"
+        android:orientation="horizontal" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/btnaPuntaje"
+                style="@style/custombutton"
+                android:layout_weight="1"
+                android:text="@string/boton1" />
+
+            <Button
+                android:id="@+id/btnCancelar"
+                style="@style/custombutton"
+                android:layout_weight="1"
+                android:text="@string/boton2" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/button3"
+                style="@style/custombutton"
+                android:layout_weight="1"
+                android:text="@string/boton3" />
+
+            <Button
+                android:id="@+id/button4"
+                style="@style/custombutton"
+                android:layout_weight="1"
+                android:text="@string/boton4" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

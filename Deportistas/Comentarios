@@ -1,0 +1,6 @@
+ponermensaje("Relacioná la imagen");
+					int id = getResources().getIdentifier(pregunta, "drawable", getPackageName());
+					Drawable drawable = getResources().getDrawable(id);
+					secpregunta.setVisibility(View.INVISIBLE);
+					visornuevo.setVisibility(View.VISIBLE);
+					visornuevo.setImageDrawable(drawable);

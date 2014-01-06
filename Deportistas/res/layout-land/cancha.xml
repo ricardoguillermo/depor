@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal" >
+
+    <!-- Heather aligned to bottom -->
+
+
+    <!-- Footer aligned to bottom -->
+
+
+    <!-- Botones stars -->
+
+    <RelativeLayout
+        android:id="@+id/menu_botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/txtPlacard"
+            android:background="@drawable/home_button_black" />
+
+        <TextView
+            android:id="@+id/txtPlacard"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_toLeftOf="@+id/txtTiempo"
+            android:background="@drawable/home_icon_empty"
+            android:padding="15dp"
+            android:text="-00"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/txtTiempo"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/home_icon_empty"
+            android:padding="15dp"
+           
+            android:text="30"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+    <!-- Conteiner Principal -->
+
+    <TableLayout
+        android:id="@+id/content1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/footer"
+         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/menu_botones"
+        android:layout_margin="20dp"
+        android:background="@drawable/panel"
+        android:orientation="horizontal"
+        android:shrinkColumns="*" 
+        android:stretchColumns="*" 
+         >
+
+       
+             <TextView
+        android:id="@+id/txtPregunta"
+        style="@style/pregunta"
+        android:layout_marginBottom="30dp"
+           />
+            
+        
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtsector4"
+                style="@style/respuestas"
+                android:layout_below="@+id/txtsector3" />
+
+            <TextView
+                android:id="@+id/txtsector3"
+                style="@style/respuestas"
+                android:layout_below="@+id/txtsector2" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtsector2"
+                style="@style/respuestas"
+                android:layout_below="@+id/txtsector1" />
+
+            <TextView
+                android:id="@+id/txtsector1"
+                style="@style/respuestas" />
+        </TableRow>
+
+        <!--
+            <Button
+            android:id="@+id/btnaPuntaje"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            android:layout_alignBottom="@+id/txtsector4"
+            android:text="@string/salir" 
+            />
+        -->
+
+      
+    </TableLayout>
+
+    <ImageView
+        android:id="@+id/imageRespuesta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/wrong"
+        android:visibility="invisible" />
+
+  
+
+</RelativeLayout>

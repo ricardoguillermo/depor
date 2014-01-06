@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.trivia"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:logo="@drawable/logo" 
+        android:icon="@drawable/ic_launcher">
+       <!-- android:theme="@android:style/Theme.Holo.NoActionBar" -->
+        
+        <activity
+            android:name="com.example.trivia.MainActivity"
+         android:label="@string/app_name" >
+         
+    <!-- Este pedazo de codigo define cual va a ser la activity principal -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="Cancha"
+            android:label="@string/titulo_cancha" 
+          
+            >
+        </activity>
+        <activity
+            android:name="Ajustes"
+            android:label="@string/titulo_ajustes" >
+        </activity>
+        <activity
+            android:name="Puntuaciones"
+            android:label="@string/titulo_puntuaciones" >
+        </activity>
+        <activity
+            android:name="Acercade"
+            android:label="@string/titulo_acercade" >
+        </activity>
+         <activity
+            android:name="Entrada"
+            android:label="@string/titulo_entrada" >
+        </activity>
+        <activity
+            android:name="Resumen"
+            android:label="@string/titulo_resumen" >
+        </activity>
+         <activity
+            android:name="Otras_apps"
+            android:label="@string/titulo_otras_apps" >
+        </activity>
+        <activity
+            android:name="Cancha_para_testar"
+            android:label="testeo" >
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+ 
+    
+    <!-- Heather aligned to bottom -->    
+<include layout="@layout/header" />
+    
+ 
+    
+    <LinearLayout
+            
+        android:id="@+id/contentajustes"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/header"
+        android:layout_margin="30dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/panel"
+        android:orientation="vertical" >
+        
+    
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" >
+
+        <RadioButton
+            android:id="@+id/radio0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Basico" />
+
+        <RadioButton
+            android:id="@+id/radio1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medio" />
+
+        <RadioButton
+            android:id="@+id/radio2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alto"
+            />
+    </RadioGroup>
+
+    
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Borrar puntajes"
+        android:layout_margin="20dp" />
+    
+    <Button
+        android:id="@+id/btnaceptarcambios"
+        style="@style/respuestas"    
+        android:text="Guardar" />
+
+    <Button
+        android:id="@+id/btnCancelar"
+        style="@style/respuestas"      
+       
+        android:text="Volver a Inicio" />
+
+    
+
+ 
+
+   </LinearLayout>
+ <!-- Footer aligned to bottom --> 
+
+<include layout="@layout/footer" />
+</RelativeLayout>
