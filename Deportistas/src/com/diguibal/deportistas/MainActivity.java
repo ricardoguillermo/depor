@@ -1,4 +1,5 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
+
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	Button button3;
 	Button button4;
 	// Diana Button btnsonido;
-	Button btnsalir;
+	//Button btnsalir;
 
 	// variable usada para almacenar el puntaje
 	static AlmacenPuntuacionesSQLite almacen;
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		button3 = (Button) findViewById(R.id.button3);// Puntaje
 		button4 = (Button) findViewById(R.id.button4);// Acerca de
 		// btnsonido= (Button) findViewById(R.id.btnsonido);// Sonido Diana
-		btnsalir = (Button) findViewById(R.id.btnsalir);
+		//btnsalir = (Button) findViewById(R.id.btnsalir);
 
 		// pongo los Listeners
 		button1.setOnClickListener(this);
@@ -56,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		button3.setOnClickListener(this);
 		button4.setOnClickListener(this);
 		// btnsonido.setOnClickListener(this);Diana
-		btnsalir.setOnClickListener(this);
+		//btnsalir.setOnClickListener(this);
 
 		// inicializa un objeto para almacenar los puntos
 		almacen = new AlmacenPuntuacionesSQLite(this, "puntuaciones", null, 1);
@@ -92,9 +93,9 @@ public class MainActivity extends Activity implements OnClickListener {
 							// test)
 			lanzarAcercade();
 			break;
-		case R.id.btnsalir:// prende o apaga el sonido
+		/*case R.id.btnsalir:// prende o apaga el sonido
 			finish();
-			break;
+			break;*/
 		}
 	}
 

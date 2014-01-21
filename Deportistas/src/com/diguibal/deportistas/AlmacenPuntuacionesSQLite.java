@@ -1,4 +1,4 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.util.Vector;
 

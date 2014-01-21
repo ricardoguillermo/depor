@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal" >
+    android:gravity="center_horizontal"
+    android:background="#006400"  >
 
     <!-- Heather aligned to bottom -->
     <!-- Pantallas small no tienen header -->
@@ -27,7 +28,7 @@
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/txtPlacard"
-            android:background="@drawable/home_button_black"
+            android:background="@drawable/home_button_verde"
             
              />
 

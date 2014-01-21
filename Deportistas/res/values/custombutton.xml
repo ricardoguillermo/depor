@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
- <style name="custombutton">
+
+    <style name="custombutton">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/white</item>
@@ -19,19 +20,18 @@
         <item name="android:background">@drawable/custombuttomyellow</item>
     </style>
 
-     <style name="custombutton.land">
+    <style name="custombutton.land">
         <item name="android:layout_margin">2dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
-       
+        
     </style>
-    
-     
-     <style name="custombutton.small">
+
+    <style name="custombutton.small">
         <item name="android:layout_margin">1dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
-       
+        
     </style>
-     
-    </resources>
+
+</resources>

@@ -1,4 +1,6 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
+
+
 
 import android.app.Activity;
 import android.view.LayoutInflater;

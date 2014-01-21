@@ -1,4 +1,4 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.trivia.R.id;
 
 import android.app.Activity;
 import android.content.Context;

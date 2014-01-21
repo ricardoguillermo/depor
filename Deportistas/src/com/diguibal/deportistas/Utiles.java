@@ -1,4 +1,4 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 public class Utiles {
 	
@@ -154,7 +154,7 @@ public class Utiles {
 				frase = "Mejor que Obdulio en el 50";
 				break;
 			case 23:
-				frase = "Maestro sos lo máximo";
+				frase = "Maestro sos lo mï¿½ximo";
 				break;
 			case 24:
 				frase = "Bien,Se ve que se que sabes del tema";

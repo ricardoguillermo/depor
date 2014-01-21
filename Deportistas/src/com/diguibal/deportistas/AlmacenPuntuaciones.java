@@ -1,4 +1,4 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.util.Vector;
 /* esta interface implementa un metodo para guardar los puntos con

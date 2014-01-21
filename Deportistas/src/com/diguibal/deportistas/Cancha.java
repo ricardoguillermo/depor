@@ -1,4 +1,4 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.trivia.R.id;
 
 import android.app.Activity;
 import android.content.Context;
@@ -140,7 +139,7 @@ public class Cancha extends Activity implements OnClickListener {
 		cargarPreferencias();
 
 		// comentar la linea al separar por categoria
-		nomarchivo="deportes_numerados";
+		//nomarchivo="deportes_numerados";
 		id = getResources().getIdentifier(nomarchivo, "raw", getPackageName());
 		
 				
@@ -527,22 +526,22 @@ public class Cancha extends Activity implements OnClickListener {
 		case 1:
 			time_elegido = 40;
 			cantidaderrores = 4;
-			nomarchivo="urubasico";
+			nomarchivo="deporbasico";
 			break;
 		case 2:
 			time_elegido = 30;
 			cantidaderrores = 3;
-			nomarchivo="urumedio";
+			nomarchivo="depormedio";
 			break;
 		case 3:
 			time_elegido = 20;
 			cantidaderrores = 2;
-			nomarchivo="urutotal";
+			nomarchivo="deportes_numerados";
 			break;
 		default:
 			time_elegido = 30;
 			cantidaderrores = 3;
-			nomarchivo="urumedio";
+			nomarchivo="depormedio";
 			break;
 		}
 

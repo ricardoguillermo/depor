@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
+    android:background="#006400">
 
     <!-- Heather aligned to bottom -->
 
@@ -11,17 +12,6 @@
     <!-- Footer aligned to bottom -->
 
     <include layout="@layout/footer" />
-
-    <Button
-            android:id="@+id/btnsalir"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_above="@+id/content1"
-            android:layout_below="@+id/header" 
-            android:layout_alignParentRight="true"
-            android:background="@drawable/star_button"
-             android:text="X"
-            android:textColor="@color/white" />
     
     
     <!-- Conteiner Principal -->
@@ -31,7 +21,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/footer"
-        android:layout_below="@+id/btnsalir"
+        android:layout_below="@+id/header"
         android:layout_centerHorizontal="true"
         android:layout_margin="30dp"
         android:background="@drawable/panel"

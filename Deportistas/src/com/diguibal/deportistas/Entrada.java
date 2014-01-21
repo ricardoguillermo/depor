@@ -1,6 +1,8 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.text.SimpleDateFormat;
+
+
 
 import android.app.Activity;
 import android.content.Context;

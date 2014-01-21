@@ -1,6 +1,4 @@
-package com.example.trivia;
-
-import com.example.trivia.R.id;
+package com.diguibal.deportistas;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,6 +1,7 @@
-package com.example.trivia;
+package com.diguibal.deportistas;
 
 import java.util.Vector;
+
 
 import android.app.Activity;
 import android.os.Bundle;

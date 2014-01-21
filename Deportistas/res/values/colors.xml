@@ -206,6 +206,6 @@ Organized by: Willie Tsang
     <color name="YellowGreen">#9ACD32</color>
     <!-- z -->
 <color name="custom_theme_color">#ECF4CD</color>
-<color name="BackgColor">#2D2D2E</color>
+<color name="BackgColor">#006400</color>
 <color name="Container">#0065AB</color> 
 </resources>
