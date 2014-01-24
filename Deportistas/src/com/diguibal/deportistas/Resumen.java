@@ -5,24 +5,27 @@ import java.util.Vector;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.TextView;
 
 public class Resumen extends Activity{
 	TextView nombre;
-	TextView aciertoGeneral;
-	TextView aciertoGeo;
+	TextView aciertoTenis;
+	TextView aciertoCiclismo;
 	TextView aciertoFutbol;
-	TextView aciertoDeportes;
-	TextView aciertoLun;
-	TextView aciertoLiteratura;
+	TextView aciertoBoxeo;
+	TextView aciertoAtl;
+	TextView aciertoFormula1;
+	TextView aciertoVolley;
+	TextView aciertonatacion;
+	TextView aciertomoto;
+	TextView aciertobasquete;
 	
-	TextView erroresGeneral;
-	TextView erroresGeo;
-	TextView erroresFutbol;
-	TextView erroresDeportes;
+	TextView erroresBoxeo;
 	TextView erroresLun;
-	TextView erroresLiteratura;
+	TextView erroresFormula1;
+	TextView erroresVolley;
 	
 	TextView dificiles;
 	TextView medios;
@@ -47,19 +50,24 @@ protected void onCreate(Bundle savedInstanceState) {
     listita = MainActivity.almacen.estadistica(10);
 
     nombre=(TextView) findViewById(R.id.txtresumennobre);
-    aciertoGeneral =(TextView) findViewById(R.id.txtresumengeneral);
-    aciertoGeo=(TextView) findViewById(R.id.txtresumengeo);
+    aciertoTenis =(TextView) findViewById(R.id.txtresumengeneral);
+    aciertoCiclismo=(TextView) findViewById(R.id.txtresumengeo);
     aciertoFutbol = (TextView) findViewById(R.id.txtresumenfutbol);
-    aciertoDeportes =(TextView) findViewById(R.id.txtresumendeportes);
-    aciertoLun= (TextView) findViewById(R.id.txtresumenlunfardo);
-    aciertoLiteratura =(TextView) findViewById(R.id.txtresumenliteratura);
+    aciertoBoxeo =(TextView) findViewById(R.id.txtresumendeportes);
+    aciertoAtl= (TextView) findViewById(R.id.txtresumenlunfardo);
+    aciertoFormula1 =(TextView) findViewById(R.id.txtresumenliteratura);
+    aciertoVolley=(TextView) findViewById(R.id.txtvolley);
+    aciertonatacion =(TextView) findViewById(R.id.aciertonatacion);
+    aciertomoto =(TextView) findViewById(R.id.txtmoto);
+    aciertobasquete=(TextView) findViewById(R.id.txtbasquete);
     
-    erroresGeneral=(TextView) findViewById(R.id.txterroresgeneral);
-	erroresGeo= (TextView)findViewById(R.id.txterroresgeo);
+   /* erroresTenis=(TextView) findViewById(R.id.txterroresTenis);
+	erroresCiclismo= (TextView)findViewById(R.id.txterroresCiclismo);
 	erroresFutbol=(TextView)findViewById(R.id.txterroresfutbol);
-	erroresDeportes=(TextView)findViewById(R.id.txterroresdeportes);
+	erroresBoxeo=(TextView)findViewById(R.id.txterroresBoxeo);
 	erroresLun=(TextView)findViewById(R.id.txterroreslunfardo);
-	erroresLiteratura=(TextView)findViewById(R.id.txterroresliteratura);
+	erroresFormula1=(TextView)findViewById(R.id.txterroresFormula1);
+	erroresVolley=(TextView)findViewById(R.id.txterrorvolley);*/
     
 	dificiles= (TextView) findViewById(R.id.txtdificil);
 	medios=(TextView) findViewById(R.id.txtmedias);
@@ -67,7 +75,11 @@ protected void onCreate(Bundle savedInstanceState) {
 	
 	segundospromedio=(TextView) findViewById(R.id.txttiempopromedio);
 	leerdatos();
-   colocardatos();
+	// provisorio
+	nombre.setText(misdatos);
+	
+	
+  // colocardatos();
 }
 
 private void leerdatos(){
@@ -88,31 +100,83 @@ private void colocardatos(){
 	
 	String[] valorespuntos = parts[(parts.length-1)].split(",");
 	
-	aciertoGeneral.setText("Lunfardo .."+valorespuntos[10].substring(1, valorespuntos[10].length()-3));
-	erroresGeneral.setText("Lunfardo .."+valorespuntos[11].substring(1, valorespuntos[11].length()-3));
-	
-	aciertoDeportes.setText("Deportes...."+valorespuntos[2].substring(1, valorespuntos[6].length()-1));
-	erroresDeportes.setText("Deportes.."+valorespuntos[3].substring(1, valorespuntos[7].length()-1));
-	
-	aciertoFutbol.setText("Fútbol uruguayo.."+valorespuntos[4].substring(1, valorespuntos[6].length()-1));
-	erroresFutbol.setText("Fútbol uruguayo.."+valorespuntos[5].substring(1, valorespuntos[7].length()-1));
-	
-	aciertoLiteratura.setText("Literarura nacional..."+valorespuntos[6].substring(1, valorespuntos[8].length()-1));
-	erroresLiteratura.setText("Literarura nacional..."+valorespuntos[7].substring(1, valorespuntos[9].length()-1));
-	
-	aciertoGeo.setText("Geografía...."+valorespuntos[8].substring(1, valorespuntos[6].length()-1));
-	erroresGeo.setText("Geografía.."+valorespuntos[9].substring(1, valorespuntos[7].length()-1));
+	String provisoriomal;
+	String provisoriobien;
 	
 	
-	aciertoLun.setText("General y costumbres.."+valorespuntos[0].substring(1, valorespuntos[0].length()-3));//lun
-	erroresLun.setText("General y costumbres.."+valorespuntos[1].substring(1, valorespuntos[1].length()-3));
+	provisoriobien=valorespuntos[2].substring(1, valorespuntos[2].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[3].substring(1, valorespuntos[3].length()-3) + " Mal";
+	aciertoBoxeo.setText("Boxeo...."+provisoriobien+"    "+provisoriomal);
+		//erroresBoxeo.setText("Boxeo.."+valorespuntos[3].substring(1, valorespuntos[7].length()-3));
 	
-	dificiles.setText("Preguntas dificiles .."+valorespuntos[12]);
-	medios.setText("Preguntas medias ..."+valorespuntos[13]);
-	basicos.setText("Preguntas fáciles ..."+valorespuntos[14]);
 	
-	segundospromedio.setText("Promedio de segundos por pregunta .."+valorespuntos[15]);
+	provisoriobien=valorespuntos[4].substring(1, valorespuntos[4].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[5].substring(1, valorespuntos[5].length()-3) + " Mal";
+	aciertoFutbol.setText("Fútbol.."+provisoriobien+"    "+provisoriomal);
+	//erroresFutbol.setText("Fútbol.."+valorespuntos[5].substring(1, valorespuntos[7].length()-3));
 	
+	
+	provisoriobien=valorespuntos[6].substring(1, valorespuntos[6].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[7].substring(1, valorespuntos[7].length()-3) + " Mal";
+	aciertoFormula1.setText("Fórmula 1..."+provisoriobien+"    "+provisoriomal);
+	//erroresFormula1.setText("Fórmula 1..."+valorespuntos[7].substring(1, valorespuntos[7].length()-3));
+	
+	provisoriobien=valorespuntos[8].substring(1, valorespuntos[8].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[9].substring(1, valorespuntos[9].length()-3) + " Mal";
+	aciertoCiclismo.setText("Ciclismo..."+provisoriobien+"    "+provisoriomal);
+	
+		
+	provisoriobien=valorespuntos[10].substring(1, valorespuntos[10].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[11].substring(1, valorespuntos[11].length()-3) + " Mal";
+	aciertoTenis.setText("Tenis .."+provisoriobien+"    "+provisoriomal);
+	//erroresTenis.setText("Tenis .."+valorespuntos[11].substring(1, valorespuntos[11].length()-3));
+	
+		
+	// ojo
+	provisoriobien=valorespuntos[12].substring(1, valorespuntos[12].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[13].substring(1, valorespuntos[13].length()-3) + " Mal";
+	aciertoVolley.setText("Volley .."+provisoriobien+"    "+provisoriomal);
+	//err.setText("Volley .."+valorespuntos[13].substring(1, valorespuntos[13].length()-3));
+	
+	provisoriobien=valorespuntos[14].substring(1, valorespuntos[14].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[15].substring(1, valorespuntos[15].length()-3) + " Mal";
+	aciertoAtl.setText("Atletismo.."+provisoriobien+"    "+provisoriomal);
+	//erroneral.setText("Atletismo .."+valorespuntos[15].substring(1, valorespuntos[15].length()-3));
+	
+	
+	provisoriobien = valorespuntos[16].substring(1, valorespuntos[16].length()-3)+ " Bien";
+	provisoriomal = valorespuntos[17].substring(1, valorespuntos[17].length()-3) + " Mal";
+	aciertonatacion.setText("Natación .."+provisoriobien+"    "+provisoriomal);
+	//erroresGneral.setText("Natación .."+valorespuntos[17].substring(1, valorespuntos[17].length()-3));
+	
+	
+	provisoriobien = valorespuntos[18].substring(1, valorespuntos[18].length()-3)+ " Bien";
+	provisoriomal = valorespuntos[19].substring(1, valorespuntos[19].length()-3) + " Mal";
+	aciertobasquete.setText("Basquetbol .."+provisoriobien+"    "+provisoriomal);
+	//aciGeneral.setText("Basquet .."+valorespuntos[18].substring(1, valorespuntos[18].length()-3));
+	//erroeneral.setText("Basquet .."+valorespuntos[19].substring(1, valorespuntos[19].length()-3));
+	
+	provisoriobien = valorespuntos[20].substring(1, valorespuntos[20].length()-3)+ " Bien";
+	provisoriomal = valorespuntos[21].substring(1, valorespuntos[21].length()-3) + " Mal";
+	aciertomoto.setText("Motociclismo .."+provisoriobien+"    "+provisoriomal);
+	//aciertoGenal.setText("Motociclismo .."+valorespuntos[20].substring(1, valorespuntos[20].length()-3));
+	//errorsGeneral.setText("Motociclismoiles .."+valorespuntos[21]);
+	
+	
+	//medios.setText("Preguntas medias ..."+valorespuntos[13]);
+	//basicos.setText("Preguntas fáciles ..."+valorespuntos[14]);
+	
+	//segundospromedio.setText("Promedio de segundos por pregunta .."+valorespuntos[15]);
+
+}
+
+public boolean onKeyDown(int keyCode, KeyEvent event)
+{
+    if ((keyCode == KeyEvent.KEYCODE_BACK))
+    {
+        finish();
+    }
+    return super.onKeyDown(keyCode, event);
 }
 
 }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewDebug.CapturedViewProperty;
@@ -64,12 +64,18 @@ public class Cancha extends Activity implements OnClickListener {
 	int lecturapondrada;
 
 	// contadores de estadistica
-	int contadoraciertolun, contadorerrorlun;
-	int contadoraciertodepor, contadorerrordepor;
-	int contadoraciertogeo, contadorerrorgeo;
+	int contadoraciertotenis, contadorerrortenis;
+	int contadoraciertoboxeo, contadorerrorboxeo;
+	int contadoraciertocic, contadorerrorcic;
 	int contadoraciertofut, contadorerrorfut;
-	int contadoraciertolit, contadorerrorlit;
-	int contadoraciertogen, contadorerrorgen;
+	int contadoraciertofor, contadorerrorfor;
+	int contadoraciertorall, contadorerrorrall;
+	int contadoraciertovol, contadorerrorvol;
+	int contadoraciertoatl, contadorerroratl;
+	int contadoraciertonat, contadorerrornat;
+	int contadoraciertobas, contadorerrorbas;
+	int contadoraciertomot, contadorerrormot;
+
 	int altas, medias, basicas;
 	int contadorsegundos;
 	int cantidadpreguntas;
@@ -95,12 +101,12 @@ public class Cancha extends Activity implements OnClickListener {
 
 	String nomarchivo;
 	int id;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);// elimina barra 
+		requestWindowFeature(Window.FEATURE_NO_TITLE);// elimina barra
 		setContentView(R.layout.cancha);
 
 		// instancia las variables con los recursos
@@ -126,7 +132,7 @@ public class Cancha extends Activity implements OnClickListener {
 		// aPuntaje.setOnClickListener(this);Diana
 
 		// Diana inicializa variable mp m+usica de fondo
-		mp = MediaPlayer.create(this, R.raw.latin_industries); // agrega musica
+		mp = MediaPlayer.create(this, R.raw.musicadeportes); // agrega musica
 																// al mp
 
 		// Diana ejecuta la musica si o si.
@@ -139,10 +145,9 @@ public class Cancha extends Activity implements OnClickListener {
 		cargarPreferencias();
 
 		// comentar la linea al separar por categoria
-		//nomarchivo="deportes_numerados";
+		// nomarchivo="deportes_numerados";
 		id = getResources().getIdentifier(nomarchivo, "raw", getPackageName());
-		
-				
+
 		// tiempo
 		timer = new Timer("Temporizador");
 		Tarea tarea = new Tarea();
@@ -234,7 +239,7 @@ public class Cancha extends Activity implements OnClickListener {
 				soundPool.play(mal, 1, 1, 1, 0, 1);
 				puntaje(-10, sector1);
 			}
-			nueva_jugada();
+			// nueva_jugada();
 			break;
 		case R.id.txtsector2:// clik en sector 2,
 			if (acierto == 2) {
@@ -245,7 +250,7 @@ public class Cancha extends Activity implements OnClickListener {
 				soundPool.play(mal, 1, 1, 1, 0, 1);
 				puntaje(-10, sector2);
 			}
-			nueva_jugada();
+			// nueva_jugada();
 			break;
 		case R.id.txtsector3:// clik en sector 3
 			if (acierto == 3) {
@@ -256,7 +261,7 @@ public class Cancha extends Activity implements OnClickListener {
 				soundPool.play(mal, 1, 1, 1, 0, 1);
 				puntaje(-10, sector3);
 			}
-			nueva_jugada();
+			// nueva_jugada();
 			break;
 		case R.id.txtsector4:// corresponde al 4 sector luego cambiar nombre
 			if (acierto == 4) {
@@ -267,7 +272,7 @@ public class Cancha extends Activity implements OnClickListener {
 				soundPool.play(mal, 1, 1, 1, 0, 1);
 				puntaje(-10, sector4);
 			}
-			nueva_jugada();
+			// nueva_jugada();
 			break;
 		case R.id.btnVolver:// vulve a el menu inicio,
 			Context context = getApplicationContext();
@@ -307,16 +312,19 @@ public class Cancha extends Activity implements OnClickListener {
 			respuesta.setImageResource(getBaseContext().getResources()
 					.getIdentifier("wrong", "drawable", getPackageName()));// Diana
 			revisarelcorrecto();// pinta el correcto
-
-			// si la cantidad de errores es inadmisible
-			// empieza el camino a Entrada
-			if (errores > cantidaderrores) {
-				estado = 0;
-				guardaraciertos(0, nivel, temasortedo);
-				pasar_final();
-				return;
-			}
 		}
+		// si la cantidad de errores es inadmisible
+		// empieza el camino a Entrada
+		if (errores > cantidaderrores) {
+			estado = 0;
+			guardaraciertos(0, nivel, temasortedo);
+			pasar_final();
+			return;
+		} else {
+			nueva_jugada();
+			estado = 1;// ?
+		}
+
 	}
 
 	// esta sobreescrita por si no hay click y si demora
@@ -333,10 +341,11 @@ public class Cancha extends Activity implements OnClickListener {
 		placard.setText(str);
 
 		revisarelcorrecto();// pinta el correcto en verde
-
+		// ponermensaje("errores =" + errores);
 		if (errores > cantidaderrores) {// si son mas de los errores permitidos
 										// va a otra activity
 			estado = 0;// ?
+			errores = 0;
 			pasar_final();
 			return;
 		} else {
@@ -373,23 +382,25 @@ public class Cancha extends Activity implements OnClickListener {
 	/*
 	 * pasa una activity Entrada porque hay errore demais
 	 */
-	public void pasar_final(){
+	public void pasar_final() {
 		// me avisa de los errores
-		//Diana si queres cambiar con la imagen de un lloron totalmente de acuerdo
+		// Diana si queres cambiar con la imarall de un lloron totalmente de
+		// acuerdo
 		ponermensaje("Lo siento lleguaste al máximo de errores");
-				
-		errores=0;// por las dudas 
-		
+
+		errores = 0;// por las dudas
+
 		estadistica();// llena la variable misdatos
-		
-		time=-3;// por las dudas no se superponga con la rutina de tiempo
-		estado=0;// por las dudas con el uso se vera su necesidad
-		
-		Intent te = new Intent( this, Entrada.class);
-		te.putExtra("puntos", puntos);// envia puntos del juego 
-		te.putExtra("misdatos", misdatos); //envia estadística de lo contestado
+
+		time = -3;// por las dudas no se superponga con la rutina de tiempo
+		estado = 0;// por las dudas con el uso se vera su necesidad
+
+		Intent te = new Intent(this, Entrada.class);
+		te.putExtra("puntos", puntos);// envia puntos del juego
+		te.putExtra("misdatos", misdatos); // envia estadística de lo contestado
 		startActivity(te);
-		mp.stop();//Diana para la musica
+		mp.stop();// Diana para la musica
+		finish();
 	}
 
 	/*
@@ -478,8 +489,8 @@ public class Cancha extends Activity implements OnClickListener {
 		// lee un archivo de nombre cuatrorespuestas previamente colocado
 		try {
 			InputStream fraw = getResources().openRawResource(id);
-					//R.raw.cuatrorespuestas);// mundiales es el archovo de texto
-											// que lee
+			// R.raw.cuatrorespuestas);// mundiales es el archovo de texto
+			// que lee
 			int a = 0;
 			BufferedReader brin = new BufferedReader(
 					new InputStreamReader(fraw));
@@ -514,8 +525,7 @@ public class Cancha extends Activity implements OnClickListener {
 
 	/*
 	 * En funcion del nivel elegido y rescatado en las preferencias se define el
-	 * tiempo y la cantidad de errores 
-	 * El nivel lo d ael archivo de txt que lee
+	 * tiempo y la cantidad de errores El nivel lo d ael archivo de txt que lee
 	 */
 
 	public void cargarPreferencias() {
@@ -526,22 +536,22 @@ public class Cancha extends Activity implements OnClickListener {
 		case 1:
 			time_elegido = 40;
 			cantidaderrores = 4;
-			nomarchivo="deporbasico";
+			nomarchivo = "deporbasico";
 			break;
 		case 2:
 			time_elegido = 30;
 			cantidaderrores = 3;
-			nomarchivo="depormedio";
+			nomarchivo = "depormedio";
 			break;
 		case 3:
 			time_elegido = 20;
 			cantidaderrores = 2;
-			nomarchivo="deportes_numerados";
+			nomarchivo = "deportes_numerados";
 			break;
 		default:
 			time_elegido = 30;
 			cantidaderrores = 3;
-			nomarchivo="depormedio";
+			nomarchivo = "depormedio";
 			break;
 		}
 
@@ -578,7 +588,7 @@ public class Cancha extends Activity implements OnClickListener {
 	}
 
 	/*
-	 * Los métodos siguientes evitan el click consecutivo No se si con la imagen
+	 * Los métodos siguientes evitan el click consecutivo No se si con la imarall
 	 * superpuesta de Diana son ahora necesario spero...
 	 */
 
@@ -606,35 +616,35 @@ public class Cancha extends Activity implements OnClickListener {
 	 */
 	private void guardaraciertos(int acierto, String nivel, String temasortedo) {
 
-		// Estadisticas Lunfardos
-		if (temasortedo.equals("Lun")) {
+		// Estadisticas tenis
+		if (temasortedo.equals("T")) {
 			if (acierto == 1) {
-				contadoraciertolun += 1;
+				contadoraciertotenis += 1;
 			} else {
-				contadorerrorlun += 1;
+				contadorerrortenis += 1;
 			}
 		}
 
-		// Estadisticas Deportes
-		if (temasortedo.equals("D")) {
+		// Estadisticas Boxeo
+		if (temasortedo.equals("Box")) {
 			if (acierto == 1) {
-				contadoraciertodepor += 1;
+				contadoraciertoboxeo += 1;
 			} else {
-				contadorerrordepor += 1;
+				contadorerrorboxeo += 1;
 			}
 		}
 
-		// Estadisticas Geografia
-		if (temasortedo.equals("G")) {
+		// Estadisticas Ciclismo
+		if (temasortedo.equals("Cic")) {
 			if (acierto == 1) {
-				contadoraciertogeo += 1;
+				contadoraciertocic += 1;
 			} else {
-				contadorerrorgeo += 1;
+				contadorerrorcic += 1;
 			}
 		}
 
 		// Estadisticas Fútbol
-		if (temasortedo.equals("F")) {
+		if (temasortedo.equals("Fut")) {
 			if (acierto == 1) {
 				contadoraciertofut += 1;
 			} else {
@@ -642,22 +652,68 @@ public class Cancha extends Activity implements OnClickListener {
 			}
 		}
 
-		// Estadisticas literatura
-		if (temasortedo.equals("L")) {
+		// Estadisticas Formula 1
+		if (temasortedo.equals("For")) {
 			if (acierto == 1) {
-				contadoraciertolit += 1;
+				contadoraciertofor += 1;
 			} else {
-				contadorerrorlit += 1;
+				contadorerrorfor += 1;
 			}
 		}
 
-		// Estadisticas General
-		if (temasortedo.equals("Gen")) {
+		// Estadisticas Rally
+		if (temasortedo.equals("Rall")) {
 			if (acierto == 1) {
-				contadoraciertogen += 1;
+				contadoraciertorall += 1;
 			} else {
-				contadorerrorgen += 1;
+				contadorerrorrall += 1;
 			}
+		}
+
+		// Estadisticas volley
+		if (temasortedo.equals("Vol")) {
+			if (acierto == 1) {
+				contadoraciertovol += 1;
+			} else {
+				contadorerrorvol += 1;
+			}
+		}
+
+		// Estadisticas Atletismo
+		if (temasortedo.equals("ATL")) {
+			if (acierto == 1) {
+				contadoraciertoatl += 1;
+			} else {
+				contadorerroratl += 1;
+			}
+		}
+
+		// Estadisticas Natacion
+		if (temasortedo.equals("Nat")) {
+			if (acierto == 1) {
+				contadoraciertonat += 1;
+			} else {
+				contadorerrornat += 1;
+			}
+		}
+
+		// Estadisticas Bas
+		if (temasortedo.equals("Bas")) {
+			if (acierto == 1) {
+				contadoraciertobas += 1;
+			} else {
+				contadorerrorbas += 1;
+			}
+		}
+
+		// Estadisticas motociclismo
+		if (temasortedo.equals("Rot")) {
+			if (acierto == 1) {
+				contadoraciertomot += 1;
+			} else {
+				contadorerrormot += 1;
+			}
+
 		}
 
 		// dificultad
@@ -686,37 +742,60 @@ public class Cancha extends Activity implements OnClickListener {
 	private String estadistica() {
 		// 0 o 1 por acierto cantidad y tema mas coma
 
-		// aciertos y errores general
-		String agen = "1" + contadoraciertogen + "Gen";
-		String errorgen = "0" + contadorerrorgen + "Gen";
+		// aciertos y errores Rally
+		String arall = "1" + contadoraciertorall + "Ral";
+		String errorrall = "0" + contadorerrorrall + "Ral";
 
-		// aciertos y errores deportes
-		String adep = "1" + contadoraciertodepor + "D";
-		String errordep = "0" + contadorerrordepor + "D";
+		// aciertos y errores boxeo
+		String abox = "1" + contadoraciertoboxeo + "Box";
+		String errorbox = "0" + contadorerrorboxeo + "Box";
 
 		// aciertos y errores futbol
-		String afut = "1" + contadoraciertofut + "F";
-		String errorfut = "0" + contadorerrorfut + "F";
+		String afut = "1" + contadoraciertofut + "Fut";
+		String errorfut = "0" + contadorerrorfut + "Fut";
 
-		// aciertos y errores literatura
-		String alit = "1" + contadoraciertolit + "L";
-		String errorlit = "0" + contadorerrorlit + "L";
+		// aciertos y errores Formula 1
+		String afor = "1" + contadoraciertofor + "For";
+		String errorfor = "0" + contadorerrorfor + "For";
 
-		// aciertos y errores geografia
-		String ageo = "1" + contadoraciertogeo + "G";
-		String errorgeo = "0" + contadorerrorgeo + "G";
+		// aciertos y errores Ciclismo
+		String acic = "1" + contadoraciertocic + "Cic";
+		String errorcic = "0" + contadorerrorcic + "Cic";
 
-		// aciertos y errores lunfardo
-		String alun = "1" + contadoraciertolun + "Lun";
-		String errorlun = "0" + contadorerrorlun + "Lun";
+		// aciertos y errores tenis
+		String aten = "1" + contadoraciertotenis + "Ten";
+		String errorten = "0" + contadorerrortenis + "Ten";
+
+		// aciertos y errore volley
+		String avol = "1" + contadoraciertovol + "Vol";
+		String errorvol = "0" + contadorerrorvol + "Vol";
+
+		// aciertos y errore atletismo
+		String aatl = "1" + contadoraciertoatl + "Atl";
+		String erroratl = "0" + contadorerroratl + "ATL";
+
+		// aciertos y errore Natacion
+		String anat = "1" + contadoraciertonat + "Nat";
+		String errornat = "0" + contadorerrornat + "Nat";
+
+		// aciertos y errores basquete
+		String abas = "1" + contadoraciertobas + "Bas";
+		String errorbas = "0" + contadorerrorbas + "Bas";
+
+		// aciertos y errore motociclismo
+		String amot = "1" + contadoraciertoatl + "Mot";
+		String errormot = "0" + contadorerroratl + "Mot";
 
 		// dificultad de las preguntas
 		// promedios
-		// contadorsegundos=(contadorsegundos/cantidadpreguntas);
+		contadorsegundos=(contadorsegundos/cantidadpreguntas);
 
-		misdatos = agen + "," + errorgen + "," + adep + "," + errordep + ","
-				+ afut + "," + errorfut + "," + alit + "," + errorlit + ","
-				+ ageo + "," + errorgeo + "," + alun + "," + errorlun + ","
+		misdatos = arall + "," + errorrall + "," + abox + "," + errorbox + ","
+				+ afut + "," + errorfut + "," + afor + "," + errorfor + ","
+				+ acic + "," + errorcic + "," + aten + "," + errorten + ","
+				+ avol + ";" +errorvol + ";"+ aatl+ ";"+ erroratl + ";"
+				+ anat + ";" +errornat + ";"+ abas + ";"+ errorbas + ";"
+				+ amot + ";" +errormot + ";"
 				+ altas + "," + medias + "," + basicas + "," + contadorsegundos;
 		// ponermensaje(misdatos);
 
@@ -729,11 +808,21 @@ public class Cancha extends Activity implements OnClickListener {
 	 * se guardarían aca los datos
 	 */
 	protected void onPause() {
+
 		// TODO Auto-generated method stub
 		super.onPause();
 		if (mp.isPlaying())
 			;// si esta prendida apaga la musica Revisar
 		mp.stop();
 		finish();// termina la activity para no dejar algun residuo
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+	    if ((keyCode == KeyEvent.KEYCODE_BACK))
+	    {
+	        finish();
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
 }

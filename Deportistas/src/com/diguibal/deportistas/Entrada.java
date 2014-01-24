@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -164,5 +165,14 @@ public class Entrada extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		super.onPause();
 		finish();
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+	    if ((keyCode == KeyEvent.KEYCODE_BACK))
+	    {
+	        finish();
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
 }
