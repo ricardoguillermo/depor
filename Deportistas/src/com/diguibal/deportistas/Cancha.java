@@ -390,14 +390,14 @@ public class Cancha extends Activity implements OnClickListener {
 
 		errores = 0;// por las dudas
 
-		estadistica();// llena la variable misdatos
+		//estadistica();// llena la variable misdatos
 
 		time = -3;// por las dudas no se superponga con la rutina de tiempo
 		estado = 0;// por las dudas con el uso se vera su necesidad
 
 		Intent te = new Intent(this, Entrada.class);
 		te.putExtra("puntos", puntos);// envia puntos del juego
-		te.putExtra("misdatos", misdatos); // envia estadística de lo contestado
+		te.putExtra("misdatos", estadistica()); // envia estadística de lo contestado
 		startActivity(te);
 		mp.stop();// Diana para la musica
 		finish();
@@ -787,17 +787,19 @@ public class Cancha extends Activity implements OnClickListener {
 		String errormot = "0" + contadorerroratl + "Mot";
 
 		// dificultad de las preguntas
+		
+		
 		// promedios
 		contadorsegundos=(contadorsegundos/cantidadpreguntas);
 
 		misdatos = arall + "," + errorrall + "," + abox + "," + errorbox + ","
 				+ afut + "," + errorfut + "," + afor + "," + errorfor + ","
 				+ acic + "," + errorcic + "," + aten + "," + errorten + ","
-				+ avol + ";" +errorvol + ";"+ aatl+ ";"+ erroratl + ";"
-				+ anat + ";" +errornat + ";"+ abas + ";"+ errorbas + ";"
-				+ amot + ";" +errormot + ";"
+				+ avol + "," +errorvol + ","+ aatl+ ","+ erroratl + ","
+				+ anat + "," +errornat + ","+ abas + ","+ errorbas + ","
+				+ amot + "," +errormot + ","
 				+ altas + "," + medias + "," + basicas + "," + contadorsegundos;
-		// ponermensaje(misdatos);
+		 //ponermensaje(misdatos);
 
 		return misdatos;
 

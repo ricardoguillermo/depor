@@ -28,7 +28,7 @@
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/txtPlacard"
-            android:background="@drawable/home_button_verde"
+            android:background="@drawable/home_button_black"
             
              />
 

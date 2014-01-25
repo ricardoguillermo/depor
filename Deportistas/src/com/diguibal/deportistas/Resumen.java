@@ -25,7 +25,7 @@ public class Resumen extends Activity{
 	TextView erroresBoxeo;
 	TextView erroresLun;
 	TextView erroresFormula1;
-	TextView erroresVolley;
+	
 	
 	TextView dificiles;
 	TextView medios;
@@ -54,12 +54,16 @@ protected void onCreate(Bundle savedInstanceState) {
     aciertoCiclismo=(TextView) findViewById(R.id.txtresumengeo);
     aciertoFutbol = (TextView) findViewById(R.id.txtresumenfutbol);
     aciertoBoxeo =(TextView) findViewById(R.id.txtresumendeportes);
+   
     aciertoAtl= (TextView) findViewById(R.id.txtresumenlunfardo);
+    
     aciertoFormula1 =(TextView) findViewById(R.id.txtresumenliteratura);
     aciertoVolley=(TextView) findViewById(R.id.txtvolley);
     aciertonatacion =(TextView) findViewById(R.id.aciertonatacion);
     aciertomoto =(TextView) findViewById(R.id.txtmoto);
     aciertobasquete=(TextView) findViewById(R.id.txtbasquete);
+    
+    
     
    /* erroresTenis=(TextView) findViewById(R.id.txterroresTenis);
 	erroresCiclismo= (TextView)findViewById(R.id.txterroresCiclismo);
@@ -76,10 +80,10 @@ protected void onCreate(Bundle savedInstanceState) {
 	segundospromedio=(TextView) findViewById(R.id.txttiempopromedio);
 	leerdatos();
 	// provisorio
-	nombre.setText(misdatos);
+	nombre.setText("Hola estos son mis "+ misdatos);
 	
 	
-  // colocardatos();
+   colocardatos();
 }
 
 private void leerdatos(){
@@ -131,12 +135,6 @@ private void colocardatos(){
 	aciertoTenis.setText("Tenis .."+provisoriobien+"    "+provisoriomal);
 	//erroresTenis.setText("Tenis .."+valorespuntos[11].substring(1, valorespuntos[11].length()-3));
 	
-		
-	// ojo
-	provisoriobien=valorespuntos[12].substring(1, valorespuntos[12].length()-3)+ " Bien";
-	provisoriomal=valorespuntos[13].substring(1, valorespuntos[13].length()-3) + " Mal";
-	aciertoVolley.setText("Volley .."+provisoriobien+"    "+provisoriomal);
-	//err.setText("Volley .."+valorespuntos[13].substring(1, valorespuntos[13].length()-3));
 	
 	provisoriobien=valorespuntos[14].substring(1, valorespuntos[14].length()-3)+ " Bien";
 	provisoriomal=valorespuntos[15].substring(1, valorespuntos[15].length()-3) + " Mal";
@@ -144,12 +142,21 @@ private void colocardatos(){
 	//erroneral.setText("Atletismo .."+valorespuntos[15].substring(1, valorespuntos[15].length()-3));
 	
 	
+	provisoriobien=valorespuntos[12].substring(1, valorespuntos[12].length()-3)+ " Bien";
+	provisoriomal=valorespuntos[13].substring(1, valorespuntos[13].length()-3) + " Mal";
+	aciertoVolley.setText("Volley .."+provisoriobien+"    "+provisoriomal);
+	//err.setText("Volley .."+valorespuntos[13].substring(1, valorespuntos[13].length()-3));
+	
+	
+	
+		
 	provisoriobien = valorespuntos[16].substring(1, valorespuntos[16].length()-3)+ " Bien";
 	provisoriomal = valorespuntos[17].substring(1, valorespuntos[17].length()-3) + " Mal";
 	aciertonatacion.setText("Natación .."+provisoriobien+"    "+provisoriomal);
 	//erroresGneral.setText("Natación .."+valorespuntos[17].substring(1, valorespuntos[17].length()-3));
 	
-	
+		
+	//eacosta bandes.Resumen.uy gerente de recupero  estela 
 	provisoriobien = valorespuntos[18].substring(1, valorespuntos[18].length()-3)+ " Bien";
 	provisoriomal = valorespuntos[19].substring(1, valorespuntos[19].length()-3) + " Mal";
 	aciertobasquete.setText("Basquetbol .."+provisoriobien+"    "+provisoriomal);
@@ -162,11 +169,12 @@ private void colocardatos(){
 	//aciertoGenal.setText("Motociclismo .."+valorespuntos[20].substring(1, valorespuntos[20].length()-3));
 	//errorsGeneral.setText("Motociclismoiles .."+valorespuntos[21]);
 	
+	dificiles.setText("Preguntas altas ..."+valorespuntos[22]);
+	medios.setText("Preguntas medias ..."+valorespuntos[23]);
+	basicos.setText("Preguntas fáciles ..."+valorespuntos[24]);
 	
-	//medios.setText("Preguntas medias ..."+valorespuntos[13]);
-	//basicos.setText("Preguntas fáciles ..."+valorespuntos[14]);
 	
-	//segundospromedio.setText("Promedio de segundos por pregunta .."+valorespuntos[15]);
+	segundospromedio.setText("Promedio de segundos por pregunta .."+valorespuntos[25]);
 
 }
 
